@@ -1,0 +1,155 @@
+<script>
+  // 导航项数据
+  const favorites = [
+    { icon: '📁', name: '文稿' },
+    { icon: '⬇️', name: '下载' },
+    { icon: '🖥️', name: '桌面' },
+    { icon: '📸', name: '图片' },
+  ];
+
+  const tags = [
+    { icon: '🏷️', name: '重要', color: 'red' },
+    { icon: '🏷️', name: '工作', color: 'blue' },
+    { icon: '🏷️', name: '个人', color: 'green' },
+  ];
+</script>
+
+<div class="finder">
+  <!-- 左侧导航 -->
+  <nav class="sidebar">
+    <section class="nav-group">
+      <h3>个人收藏</h3>
+      {#each favorites as item}
+        <div class="nav-item">
+          <span class="icon">{item.icon}</span>
+          <span>{item.name}</span>
+        </div>
+      {/each}
+    </section>
+
+    <section class="nav-group">
+      <h3>标签</h3>
+      {#each tags as tag}
+        <div class="nav-item">
+          <span class="icon" style="color: {tag.color}">{tag.icon}</span>
+          <span>{tag.name}</span>
+        </div>
+      {/each}
+    </section>
+  </nav>
+
+  <!-- 右侧内容区 -->
+  <main class="content">
+    <!-- 工具栏 -->
+    <header class="toolbar">
+      <div class="navigation-buttons">
+        <button>←</button>
+        <button>→</button>
+      </div>
+      <div class="current-path">
+        <h2>文稿</h2>
+      </div>
+      <div class="tools">
+        <button>⚙️</button>
+        <button>👁️</button>
+        <button>🔍</button>
+      </div>
+    </header>
+
+    <!-- 主内容区域 -->
+    <div class="main-content">
+      <!-- 这里放置文件列表内容 -->
+      <slot />
+    </div>
+  </main>
+</div>
+
+<style>
+  .finder {
+    display: flex;
+    height: 100vh;
+    background-color: #fff;
+  }
+
+  .sidebar {
+    width: 200px;
+    background-color: #f5f5f5;
+    padding: 20px 10px;
+    border-right: 1px solid #e0e0e0;
+  }
+
+  .nav-group {
+    margin-bottom: 20px;
+  }
+
+  .nav-group h3 {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+    padding-left: 10px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .nav-item:hover {
+    background-color: #e8e8e8;
+  }
+
+  .icon {
+    margin-right: 8px;
+  }
+
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .toolbar {
+    height: 50px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    background-color: #f5f5f5;
+  }
+
+  .navigation-buttons {
+    display: flex;
+    gap: 5px;
+  }
+
+  .current-path {
+    margin: 0 20px;
+    flex: 1;
+  }
+
+  .tools {
+    display: flex;
+    gap: 10px;
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    overflow: auto;
+  }
+
+  button {
+    padding: 5px 10px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  button:hover {
+    background-color: #e8e8e8;
+  }
+</style>
