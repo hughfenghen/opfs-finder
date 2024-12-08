@@ -1,5 +1,5 @@
 // 格式化文件大小
-export function formatFileSize(bytes) {
+export function formatFileSize(bytes: number) {
   if (bytes === 0) return '0 字节';
 
   const units = ['字节', 'KB', 'MB', 'GB'];
@@ -10,7 +10,7 @@ export function formatFileSize(bytes) {
 }
 
 // 格式化日期
-export function formatDate(timestamp) {
+export function formatDate(timestamp: number) {
   const date = new Date(timestamp);
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');

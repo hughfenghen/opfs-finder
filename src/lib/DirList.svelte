@@ -1,21 +1,23 @@
-<script>
+<script lang="ts">
+  import { SvelteSet } from 'svelte/reactivity';
+
   import { formatFileSize, formatDate } from './utils';
+  import DirList from './DirList.svelte';
 
   // 接收父组件传入的数据
-  export let items = [];
-  export let level = 0; // 用于控制缩进层级
+  // 用于控制缩进层级
+  let { items, level } = $props();
 
   // 控制文件夹展开/折叠的状态
-  let expandedFolders = new Set();
+  let expandedFolders = new SvelteSet();
 
   // 切换文件夹展开状态
-  function toggleFolder(folderId) {
+  function toggleFolder(folderId: string) {
     if (expandedFolders.has(folderId)) {
       expandedFolders.delete(folderId);
     } else {
       expandedFolders.add(folderId);
     }
-    expandedFolders = expandedFolders; // 触发更新
   }
 </script>
 
@@ -35,7 +37,7 @@
     <div class="list-item" style="padding-left: {level * 20}px">
       <div class="col name">
         {#if item.type === 'folder'}
-          <button class="expand-btn" on:click={() => toggleFolder(item.id)}>
+          <button class="expand-btn" onclick={() => toggleFolder(item.id)}>
             {expandedFolders.has(item.id) ? '▼' : '▶'}
           </button>
           <span class="icon">📁</span>
@@ -53,7 +55,7 @@
 
     <!-- 递归显示子文件夹内容 -->
     {#if item.type === 'folder' && expandedFolders.has(item.id) && item.children}
-      <svelte:self items={item.children} level={level + 1} />
+      <DirList items={item.children} level={level + 1} />
     {/if}
   {/each}
 </div>

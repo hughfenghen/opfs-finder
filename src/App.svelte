@@ -35,7 +35,7 @@
 
 <main>
   <Layout>
-    <DirList items={files} />
+    <DirList items={files} level={0} />
   </Layout>
 </main>
 

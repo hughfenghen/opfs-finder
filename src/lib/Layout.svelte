@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   // 导航项数据
   const favorites = [
     { icon: '📁', name: '文稿' },
