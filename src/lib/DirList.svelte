@@ -1,15 +1,21 @@
 <script lang="ts">
   import { SvelteSet } from 'svelte/reactivity';
-
   import { formatFileSize, formatDate } from './utils';
   import DirList from './DirList.svelte';
+  import type { FileItem, FolderItem } from './types';
 
-  // 接收父组件传入的数据
-  // 用于控制缩进层级
-  let { items, level } = $props();
+  type Props = {
+    items: (FileItem | FolderItem)[];
+    level: number;
+    onMoveItem: (event: { sourceId: string; targetId: string }) => void;
+  };
+
+  let { items, level, onMoveItem }: Props = $props();
 
   // 控制文件夹展开/折叠的状态
-  let expandedFolders = new SvelteSet();
+  let expandedFolders = new SvelteSet<string>();
+
+  let dragOverId = $state<string | null>(null);
 
   // 切换文件夹展开状态
   function toggleFolder(folderId: string) {
@@ -18,6 +24,52 @@
     } else {
       expandedFolders.add(folderId);
     }
+  }
+
+  function handleDragStart(event: DragEvent, item: FileItem | FolderItem) {
+    event.dataTransfer?.setData(
+      'text/plain',
+      JSON.stringify({
+        id: item.id,
+        type: item.type,
+        name: item.name,
+      })
+    );
+  }
+
+  function handleDragOver(event: DragEvent, item: FileItem | FolderItem) {
+    if (item.type === 'folder') {
+      event.preventDefault();
+      dragOverId = item.id;
+    }
+  }
+
+  function handleDragLeave() {
+    dragOverId = null;
+  }
+
+  function handleDrop(event: DragEvent, targetFolder: FolderItem) {
+    event.preventDefault();
+    dragOverId = null;
+    const element = event.currentTarget as HTMLElement;
+    element.classList.remove('drag-over');
+
+    const draggedData = JSON.parse(
+      event.dataTransfer?.getData('text/plain') || '{}'
+    );
+
+    const detail = {
+      sourceId: draggedData.id,
+      targetId: targetFolder.id,
+    };
+    onMoveItem(detail);
+
+    const moveEvent = new CustomEvent('moveItem', {
+      detail,
+      bubbles: true,
+      composed: true,
+    });
+    element.dispatchEvent(moveEvent);
   }
 </script>
 
@@ -34,7 +86,18 @@
 
   <!-- 文件列表 -->
   {#each items as item}
-    <div class="list-item" style="padding-left: {level * 20}px">
+    <div
+      class="list-item"
+      style:padding-left="{level * 20}px"
+      draggable={true}
+      class:drag-over={dragOverId === item.id}
+      ondragstart={(e) => handleDragStart(e, item)}
+      ondragover={(e) => handleDragOver(e, item)}
+      ondragleave={handleDragLeave}
+      ondrop={(e) => handleDrop(e, item as FolderItem)}
+      role="button"
+      tabindex="0"
+    >
       <div class="col name">
         {#if item.type === 'folder'}
           <button class="expand-btn" onclick={() => toggleFolder(item.id)}>
@@ -55,7 +118,7 @@
 
     <!-- 递归显示子文件夹内容 -->
     {#if item.type === 'folder' && expandedFolders.has(item.id) && item.children}
-      <DirList items={item.children} level={level + 1} />
+      <DirList items={item.children} level={level + 1} {onMoveItem} />
     {/if}
   {/each}
 </div>
@@ -79,6 +142,7 @@
     display: flex;
     padding: 6px 0;
     border-bottom: 1px solid #f0f0f0;
+    cursor: move;
   }
 
   .list-item:hover {
@@ -121,5 +185,10 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .drag-over {
+    background-color: #e3f2fd;
+    border: 2px dashed #2196f3;
   }
 </style>
