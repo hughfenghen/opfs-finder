@@ -60,6 +60,9 @@ function createWindow() {
 
   return mount(App, {
     target: wrapper,
+    props: {
+      path: '/',
+    },
   });
 }
 

@@ -3,6 +3,8 @@
   import DirList from './lib/DirList.svelte';
   import type { FileItem, FolderItem } from './lib/types';
 
+  let { path }: { path: string } = $props();
+
   const initialFiles: (FileItem | FolderItem)[] = [
     {
       id: '1',
