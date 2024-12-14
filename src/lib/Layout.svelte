@@ -67,8 +67,12 @@
 <style>
   .finder {
     display: flex;
-    height: 100vh;
+    height: 100%;
     background-color: #fff;
+    border: 0.5px solid #b5b5b5;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
   }
 
   .sidebar {
@@ -76,6 +80,8 @@
     background-color: #f5f5f5;
     padding: 20px 10px;
     border-right: 1px solid #e0e0e0;
+    background: #e0e0de;
+    border-right: 0.5px solid #b5b5b5;
   }
 
   .nav-group {
@@ -87,14 +93,17 @@
     color: #666;
     margin-bottom: 8px;
     padding-left: 10px;
+    font-weight: normal;
   }
 
   .nav-item {
     display: flex;
     align-items: center;
-    padding: 6px 10px;
-    border-radius: 5px;
+    padding: 4px 8px;
+    border-radius: 4px;
     cursor: pointer;
+    font-size: 13px;
+    color: #333;
   }
 
   .nav-item:hover {
@@ -112,12 +121,13 @@
   }
 
   .toolbar {
-    height: 50px;
+    height: 52px;
     border-bottom: 1px solid #e0e0e0;
     display: flex;
     align-items: center;
-    padding: 0 20px;
-    background-color: #f5f5f5;
+    padding: 0 8px;
+    background: #f3f3f1;
+    -webkit-app-region: drag; /* 允许拖拽窗口 */
   }
 
   .navigation-buttons {
@@ -125,9 +135,22 @@
     gap: 5px;
   }
 
+  .navigation-buttons button {
+    font-size: 16px;
+    padding: 2px 8px;
+    color: #666;
+    -webkit-app-region: no-drag; /* 按钮不参与拖拽 */
+  }
+
   .current-path {
     margin: 0 20px;
     flex: 1;
+  }
+
+  .current-path h2 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #494949;
   }
 
   .tools {

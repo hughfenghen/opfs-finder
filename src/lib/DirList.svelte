@@ -138,27 +138,35 @@
 <style>
   .dir-list {
     width: 100%;
-    font-size: 14px;
+    font-size: 13px;
+    user-select: none;
   }
 
   .list-header {
     display: flex;
-    padding: 8px 0;
+    padding: 6px 0;
     border-bottom: 1px solid #e0e0e0;
-    background-color: #f5f5f5;
+    background-color: #fff;
     position: sticky;
     top: 0;
+    z-index: 1;
+    color: #666;
+    font-size: 12px;
   }
 
   .list-item {
     display: flex;
-    padding: 6px 0;
+    padding: 4px 0;
     border-bottom: 1px solid #f0f0f0;
-    cursor: move;
+    cursor: default;
   }
 
   .list-item:hover {
-    background-color: #f5f5f5;
+    background-color: #f0f0f0;
+  }
+
+  .list-item:active {
+    background-color: #e8e8e8;
   }
 
   .col {
@@ -174,14 +182,12 @@
 
   .size {
     width: 100px;
+    color: #666;
   }
 
   .date {
     width: 160px;
-  }
-
-  .icon {
-    margin-right: 8px;
+    color: #666;
   }
 
   .expand-btn {
@@ -189,18 +195,32 @@
     border: none;
     padding: 0 4px;
     cursor: pointer;
-    font-size: 10px;
-    color: #666;
-  }
-
-  .item-name {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 8px;
+    color: #999;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .drag-over {
-    background-color: #e3f2fd;
-    border: 2px dashed #2196f3;
+    background-color: rgba(0, 122, 255, 0.1);
+    border: 1px dashed #007aff;
+  }
+
+  /* 选中状态 */
+  .list-item.selected {
+    background-color: rgba(0, 122, 255, 0.1);
+  }
+
+  /* 文件夹展开/折叠图标 */
+  .expand-btn {
+    color: #999;
+    transition: transform 0.15s ease;
+  }
+
+  .expand-btn[data-expanded='true'] {
+    transform: rotate(90deg);
   }
 </style>

@@ -179,6 +179,7 @@
 <style>
   main {
     position: absolute;
+    padding: 20px;
     width: 900px;
     height: 500px;
     left: 50%;
