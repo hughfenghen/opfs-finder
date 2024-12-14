@@ -1,4 +1,13 @@
 <script lang="ts">
+  export let onClearSelection: () => void;
+
+  function handleMainContentClick(event: MouseEvent) {
+    // 检查点击的是否为 main-content 本身或其直接子元素
+    if (event.target === event.currentTarget) {
+      onClearSelection();
+    }
+  }
+
   // 导航项数据
   const favorites = [
     { icon: '📁', name: '文稿' },
@@ -57,7 +66,11 @@
     </header>
 
     <!-- 主内容区域 -->
-    <div class="main-content">
+    <div
+      class="main-content"
+      on:click={handleMainContentClick}
+      aria-hidden="true"
+    >
       <!-- 这里放置文件列表内容 -->
       <slot />
     </div>

@@ -7,11 +7,24 @@
   type Props = {
     items: (FileItem | FolderItem)[];
     level: number;
+    selectedIds: Set<string>;
+    onSelect: (event: {
+      id: string;
+      isCtrlKey: boolean;
+      isShiftKey: boolean;
+    }) => void;
     onMoveItem: (event: { sourceId: string; targetId: string }) => void;
     onFolderExpand: (path: string) => void;
   };
 
-  let { items, level, onMoveItem, onFolderExpand }: Props = $props();
+  let {
+    items,
+    level,
+    selectedIds,
+    onSelect,
+    onMoveItem,
+    onFolderExpand,
+  }: Props = $props();
 
   // 控制文件夹展开/折叠的状态
   let expandedFolders = new SvelteSet<string>();
@@ -75,6 +88,17 @@
     });
     element.dispatchEvent(moveEvent);
   }
+
+  function handleClick(event: MouseEvent, item: FileItem | FolderItem) {
+    // 阻止事件冒泡，避免嵌套选择问题
+    event.stopPropagation();
+
+    onSelect({
+      id: item.id,
+      isCtrlKey: event.metaKey || event.ctrlKey, // metaKey for Mac, ctrlKey for Windows
+      isShiftKey: event.shiftKey,
+    });
+  }
 </script>
 
 <div class="dir-list">
@@ -92,15 +116,16 @@
   {#each items as item}
     <div
       class="list-item"
+      class:selected={selectedIds.has(item.id)}
       style:padding-left="{level * 20}px"
       draggable={true}
       class:drag-over={dragOverId === item.id}
+      onclick={(e) => handleClick(e, item)}
       ondragstart={(e) => handleDragStart(e, item)}
       ondragover={(e) => handleDragOver(e, item)}
       ondragleave={handleDragLeave}
       ondrop={(e) => handleDrop(e, item as FolderItem)}
-      role="button"
-      tabindex="0"
+      aria-hidden="true"
     >
       <div class="col name">
         {#if item.type === 'folder'}
@@ -128,6 +153,8 @@
       <DirList
         items={item.children}
         level={level + 1}
+        {selectedIds}
+        {onSelect}
         {onFolderExpand}
         {onMoveItem}
       />
@@ -159,10 +186,6 @@
     padding: 4px 0;
     border-bottom: 1px solid #f0f0f0;
     cursor: default;
-  }
-
-  .list-item:hover {
-    background-color: #f0f0f0;
   }
 
   .list-item:active {
@@ -214,16 +237,13 @@
 
   /* 选中状态 */
   .list-item.selected {
-    background-color: rgba(0, 122, 255, 0.1);
+    color: #fff;
+    background-color: #0364e1;
   }
 
   /* 文件夹展开/折叠图标 */
   .expand-btn {
     color: #999;
     transition: transform 0.15s ease;
-  }
-
-  .expand-btn[data-expanded='true'] {
-    transform: rotate(90deg);
   }
 </style>
