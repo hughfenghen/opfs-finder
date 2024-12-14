@@ -76,6 +76,7 @@
   }
 
   .sidebar {
+    flex: 0 0 180px;
     width: 200px;
     background-color: #f5f5f5;
     padding: 20px 10px;
@@ -116,6 +117,7 @@
 
   .content {
     flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
   }

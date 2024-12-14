@@ -138,7 +138,7 @@
 <style>
   .dir-list {
     width: 100%;
-    font-size: 13px;
+    font-size: 14px;
     user-select: none;
   }
 
@@ -202,6 +202,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .icon {
+    margin-right: 6px;
   }
 
   .drag-over {
