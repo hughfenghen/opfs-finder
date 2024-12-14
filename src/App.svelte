@@ -7,6 +7,51 @@
   let { path }: { path: string } = $props();
   let items = $state<(FileItem | FolderItem)[]>([]);
 
+  // 拖拽相关状态
+  let isDragging = false;
+  let startX = 0;
+  let startY = 0;
+
+  // 初始化拖拽功能
+  function initDrag(node: HTMLElement) {
+    function handleMouseDown(e: MouseEvent) {
+      if ((e.target as HTMLElement).closest('.toolbar')) {
+        isDragging = true;
+        // 获取当前实际位置
+        const rect = node.getBoundingClientRect();
+        startX = e.clientX - rect.left;
+        startY = e.clientY - rect.top;
+        // 移除居中定位
+        node.style.left = rect.left + 'px';
+        node.style.top = rect.top + 'px';
+        node.style.transform = 'none';
+      }
+    }
+
+    function handleMouseMove(e: MouseEvent) {
+      if (isDragging) {
+        node.style.left = `${e.clientX - startX}px`;
+        node.style.top = `${e.clientY - startY}px`;
+      }
+    }
+
+    function handleMouseUp() {
+      isDragging = false;
+    }
+
+    node.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return {
+      destroy() {
+        node.removeEventListener('mousedown', handleMouseDown);
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      },
+    };
+  }
+
   // 初始加载根目录
   $effect(() => {
     loadDirectory(path);
@@ -120,7 +165,7 @@
   }
 </script>
 
-<main>
+<main use:initDrag>
   <Layout>
     <DirList
       {items}
@@ -131,4 +176,15 @@
   </Layout>
 </main>
 
-<style></style>
+<style>
+  main {
+    position: absolute;
+    width: 900px;
+    height: 500px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    resize: both;
+    overflow: hidden;
+  }
+</style>

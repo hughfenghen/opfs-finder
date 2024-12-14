@@ -26,41 +26,8 @@ let zIndex = 1;
 function createWindow() {
   const wrapper = document.createElement('div');
   wrapper.style.cssText = `
-    position: absolute;
-    width: 900px;
-    height: 500px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    resize: both;
-    overflow: hidden;
-    z-index: ${zIndex++};
+      z-index: ${zIndex++};
   `;
-
-  // 添加拖拽移动功能
-  let isDragging = false;
-  let startX = 0,
-    startY = 0;
-
-  wrapper.addEventListener('mousedown', (e) => {
-    if ((e.target as HTMLElement).closest('.toolbar')) {
-      isDragging = true;
-      startX = e.clientX - wrapper.offsetLeft;
-      startY = e.clientY - wrapper.offsetTop;
-    }
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (isDragging) {
-      wrapper.style.left = `${e.clientX - startX}px`;
-      wrapper.style.top = `${e.clientY - startY}px`;
-      wrapper.style.transform = 'none';
-    }
-  });
-
-  document.addEventListener('mouseup', () => {
-    isDragging = false;
-  });
 
   container.appendChild(wrapper);
 
