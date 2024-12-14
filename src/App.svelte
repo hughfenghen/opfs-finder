@@ -2,38 +2,74 @@
   import Layout from './lib/Layout.svelte';
   import DirList from './lib/DirList.svelte';
   import type { FileItem, FolderItem } from './lib/types';
+  import { dir } from 'opfs-tools';
 
   let { path }: { path: string } = $props();
+  let items = $state<(FileItem | FolderItem)[]>([]);
 
-  const initialFiles: (FileItem | FolderItem)[] = [
-    {
-      id: '1',
-      name: '文档',
-      type: 'folder',
-      modifiedAt: Date.now(),
-      createdAt: Date.now() - 86400000,
-      children: [
-        {
-          id: '2',
-          name: '报告.pdf',
-          type: 'file',
-          size: 1024 * 1024 * 2.5, // 2.5MB
-          modifiedAt: Date.now(),
-          createdAt: Date.now(),
-        },
-      ],
-    },
-    {
-      id: '3',
-      name: '照片.jpg',
-      type: 'file',
-      size: 1024 * 500, // 500KB
-      modifiedAt: Date.now(),
-      createdAt: Date.now(),
-    },
-  ];
+  // 初始加载根目录
+  $effect(() => {
+    loadDirectory(path);
+  });
 
-  let items = $state(initialFiles);
+  async function loadDirectory(dirPath: string) {
+    try {
+      const entries = await dir(dirPath).children();
+      const dirItems = entries.map(
+        async (entry): Promise<FileItem | FolderItem> => {
+          const baseItem = {
+            id: entry.path,
+            name: entry.name,
+            modifiedAt: Date.now(),
+            createdAt: Date.now(),
+          };
+
+          if (entry.kind === 'dir') {
+            return {
+              ...baseItem,
+              type: 'folder',
+              children: [], // 初始为空，展开时加载
+            };
+          } else {
+            return {
+              ...baseItem,
+              type: 'file',
+              size: await entry.getSize(),
+            };
+          }
+        }
+      );
+
+      if (dirPath === path) {
+        items = await Promise.all(dirItems);
+      } else {
+        // 更新子文件夹的内容
+        updateFolderChildren(dirPath, await Promise.all(dirItems));
+      }
+    } catch (error) {
+      console.error('Failed to load directory:', error);
+    }
+  }
+
+  function updateFolderChildren(
+    folderPath: string,
+    children: (FileItem | FolderItem)[]
+  ) {
+    function updateFolder(items: (FileItem | FolderItem)[]): boolean {
+      for (const item of items) {
+        if (item.id === folderPath && item.type === 'folder') {
+          item.children = children;
+          return true;
+        }
+        if (item.type === 'folder' && item.children) {
+          if (updateFolder(item.children)) return true;
+        }
+      }
+      return false;
+    }
+    updateFolder(items);
+    items = [...items]; // 触发更新
+  }
 
   function handleMoveItem(eventDetail: { sourceId: string; targetId: string }) {
     const { sourceId, targetId } = eventDetail;
@@ -77,11 +113,21 @@
       items = [...items]; // 触发更新
     }
   }
+
+  // 处理文件夹展开事件
+  function handleFolderExpand(path: string) {
+    loadDirectory(path);
+  }
 </script>
 
 <main>
   <Layout>
-    <DirList {items} level={0} onMoveItem={handleMoveItem} />
+    <DirList
+      {items}
+      level={0}
+      onMoveItem={handleMoveItem}
+      onFolderExpand={handleFolderExpand}
+    />
   </Layout>
 </main>
 

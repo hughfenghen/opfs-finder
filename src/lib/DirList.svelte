@@ -8,9 +8,10 @@
     items: (FileItem | FolderItem)[];
     level: number;
     onMoveItem: (event: { sourceId: string; targetId: string }) => void;
+    onFolderExpand: (path: string) => void;
   };
 
-  let { items, level, onMoveItem }: Props = $props();
+  let { items, level, onMoveItem, onFolderExpand }: Props = $props();
 
   // 控制文件夹展开/折叠的状态
   let expandedFolders = new SvelteSet<string>();
@@ -18,11 +19,14 @@
   let dragOverId = $state<string | null>(null);
 
   // 切换文件夹展开状态
-  function toggleFolder(folderId: string) {
-    if (expandedFolders.has(folderId)) {
-      expandedFolders.delete(folderId);
+  function toggleFolder(folder: FolderItem) {
+    if (!expandedFolders.has(folder.id)) {
+      onFolderExpand(folder.id); // folder.id 就是文件夹路径
+    }
+    if (expandedFolders.has(folder.id)) {
+      expandedFolders.delete(folder.id);
     } else {
-      expandedFolders.add(folderId);
+      expandedFolders.add(folder.id);
     }
   }
 
@@ -100,7 +104,10 @@
     >
       <div class="col name">
         {#if item.type === 'folder'}
-          <button class="expand-btn" onclick={() => toggleFolder(item.id)}>
+          <button
+            class="expand-btn"
+            onclick={() => toggleFolder(item as FolderItem)}
+          >
             {expandedFolders.has(item.id) ? '▼' : '▶'}
           </button>
           <span class="icon">📁</span>
@@ -118,7 +125,12 @@
 
     <!-- 递归显示子文件夹内容 -->
     {#if item.type === 'folder' && expandedFolders.has(item.id) && item.children}
-      <DirList items={item.children} level={level + 1} {onMoveItem} />
+      <DirList
+        items={item.children}
+        level={level + 1}
+        {onFolderExpand}
+        {onMoveItem}
+      />
     {/if}
   {/each}
 </div>

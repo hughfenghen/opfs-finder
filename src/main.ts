@@ -1,6 +1,7 @@
 import { mount } from 'svelte';
 import './app.css';
 import App from './App.svelte';
+import { write } from 'opfs-tools';
 
 // 创建一个容器用于放置所有窗口
 const container = document.createElement('div');
@@ -13,6 +14,11 @@ container.style.cssText = `
   display: flex;
 `;
 document.body.appendChild(container);
+
+(async function initTestFiles() {
+  await write('/Documents/doc1.txt', 'test');
+  await write('/Downloads/doc2.txt', 'test');
+})();
 
 let zIndex = 1;
 
