@@ -205,12 +205,12 @@
 
   .size {
     width: 100px;
-    color: #666;
+    opacity: 0.6;
   }
 
   .date {
     width: 160px;
-    color: #666;
+    opacity: 0.6;
   }
 
   .expand-btn {
