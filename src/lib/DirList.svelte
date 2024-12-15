@@ -15,6 +15,7 @@
     }) => void;
     onMoveItem: (event: { sourceId: string; targetId: string }) => void;
     onFolderExpand: (path: string) => void;
+    onContextMenu: (event: MouseEvent, item: FileItem | FolderItem) => void;
   };
 
   let {
@@ -24,6 +25,7 @@
     onSelect,
     onMoveItem,
     onFolderExpand,
+    onContextMenu,
   }: Props = $props();
 
   // 控制文件夹展开/折叠的状态
@@ -99,6 +101,15 @@
       isShiftKey: event.shiftKey,
     });
   }
+
+  // 处理右键点击
+  function handleContextMenu(event: MouseEvent, item: FileItem | FolderItem) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // 调用父组件的 onContextMenu 处理函数
+    onContextMenu(event, item);
+  }
 </script>
 
 <div class="dir-list">
@@ -121,6 +132,7 @@
       draggable={true}
       class:drag-over={dragOverId === item.id}
       onclick={(e) => handleClick(e, item)}
+      oncontextmenu={(e) => handleContextMenu(e, item)}
       ondragstart={(e) => handleDragStart(e, item)}
       ondragover={(e) => handleDragOver(e, item)}
       ondragleave={handleDragLeave}
@@ -157,6 +169,7 @@
         {onSelect}
         {onFolderExpand}
         {onMoveItem}
+        {onContextMenu}
       />
     {/if}
   {/each}

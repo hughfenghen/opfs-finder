@@ -3,6 +3,7 @@
   import DirList from './lib/DirList.svelte';
   import type { FileItem, FolderItem } from './lib/types';
   import { dir, file } from 'opfs-tools';
+  import ContextMenu from './lib/ContextMenu.svelte';
 
   let { path }: { path: string } = $props();
   let items = $state<(FileItem | FolderItem)[]>([]);
@@ -233,7 +234,7 @@
     loadDirectory(path);
   }
 
-  // 删除选中的文件和文件夹
+  // 删除选中文件和文件夹
   async function deleteSelectedItems() {
     const allItems = getAllItems(items);
     const itemsToDelete = allItems.filter((item) => selectedIds.has(item.id));
@@ -263,15 +264,109 @@
       }
     }
   }
+
+  let contextMenu = $state<{
+    show: boolean;
+    x: number;
+    y: number;
+    items: any[];
+  }>({
+    show: false,
+    x: 0,
+    y: 0,
+    items: [],
+  });
+
+  // 处理空白区域右键
+  function handleContextMenu(e: MouseEvent) {
+    if (e.target === e.currentTarget) {
+      e.preventDefault();
+      contextMenu = {
+        show: true,
+        x: e.clientX,
+        y: e.clientY,
+        items: [
+          {
+            icon: '��',
+            name: '新建文件夹',
+            onClick: () => {
+              /* 处理新建文件夹 */
+            },
+          },
+          {
+            icon: '📄',
+            name: '新建文本文件',
+            onClick: () => {
+              /* 处理新建文本文件 */
+            },
+          },
+        ],
+      };
+    }
+  }
+
+  // 处理文件项右键
+  function handleItemContextMenu(e: MouseEvent, item: FileItem | FolderItem) {
+    e.preventDefault();
+
+    // 根据选中项的数量和类型来动态生成菜单项
+    const menuItems = [];
+
+    // 基础操作：删除
+    menuItems.push({
+      icon: '🗑️',
+      name: `删除${items.length > 1 ? `(${items.length}项)` : ''}`,
+      onClick: () => deleteSelectedItems(),
+    });
+
+    // 复制操作
+    menuItems.push({
+      icon: '📋',
+      name: `复制${items.length > 1 ? `(${items.length}项)` : ''}`,
+      onClick: () => {
+        /* 处理复制 */
+      },
+    });
+
+    // 如果只选中了一个项目，且是文件类型，才显示"打开方式"菜单
+    if (items.length === 1 && items[0].type === 'file') {
+      menuItems.push({
+        icon: '📂',
+        name: '打开方式',
+        children: [
+          { name: '文本', onClick: () => {} },
+          { name: '图片', onClick: () => {} },
+          { name: '视频', onClick: () => {} },
+          { name: '音频', onClick: () => {} },
+        ],
+      });
+    }
+
+    contextMenu = {
+      show: true,
+      x: e.clientX,
+      y: e.clientY,
+      items: menuItems,
+    };
+  }
+
+  // 点击其他区域关闭菜单
+  function handleClick() {
+    contextMenu.show = false;
+  }
 </script>
 
-<svelte:window on:keydown={handleKeyDown} />
+<svelte:window on:keydown={handleKeyDown} on:click={handleClick} />
 
 <main use:initDrag>
   <Layout
-    onClearSelection={() => {
-      lastSelectedId = null;
-      selectedIds = new Set();
+    onClickEmpty={(evt: MouseEvent) => {
+      if (evt.button === 2) {
+        handleContextMenu(evt);
+      } else {
+        lastSelectedId = null;
+        selectedIds = new Set();
+      }
     }}
   >
     <DirList
@@ -281,9 +376,14 @@
       onSelect={handleSelect}
       onMoveItem={handleMoveItem}
       onFolderExpand={handleFolderExpand}
+      onContextMenu={handleItemContextMenu}
     />
   </Layout>
 </main>
+
+{#if contextMenu.show}
+  <ContextMenu items={contextMenu.items} x={contextMenu.x} y={contextMenu.y} />
+{/if}
 
 <style>
   main {

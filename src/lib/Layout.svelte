@@ -1,12 +1,10 @@
 <script lang="ts">
-  export let onClearSelection: () => void;
+  import type { Snippet } from 'svelte';
 
-  function handleMainContentClick(event: MouseEvent) {
-    // 检查点击的是否为 main-content 本身或其直接子元素
-    if (event.target === event.currentTarget) {
-      onClearSelection();
-    }
-  }
+  const {
+    onClickEmpty,
+    children,
+  }: { onClickEmpty: (evt: MouseEvent) => void; children: Snippet } = $props();
 
   // 导航项数据
   const favorites = [
@@ -68,11 +66,18 @@
     <!-- 主内容区域 -->
     <div
       class="main-content"
-      on:click={handleMainContentClick}
+      onclick={(evt) => {
+        // 检查点击的是否为 main-content 本身或其直接子元素
+        if (evt.target === evt.currentTarget) {
+          onClickEmpty(evt);
+        }
+      }}
+      oncontextmenu={(evt) => {
+        onClickEmpty(evt);
+      }}
       aria-hidden="true"
     >
-      <!-- 这里放置文件列表内容 -->
-      <slot />
+      {@render children()}
     </div>
   </main>
 </div>
