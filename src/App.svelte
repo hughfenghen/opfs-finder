@@ -2,7 +2,7 @@
   import Layout from './lib/Layout.svelte';
   import DirList from './lib/DirList.svelte';
   import type { FileItem, FolderItem } from './lib/types';
-  import { dir } from 'opfs-tools';
+  import { dir, file } from 'opfs-tools';
 
   let { path }: { path: string } = $props();
   let items = $state<(FileItem | FolderItem)[]>([]);
@@ -173,7 +173,32 @@
     items = [...items]; // 触发更新
   }
 
-  function handleMoveItem(eventDetail: { sourceId: string; targetId: string }) {
+  // 从树中删除指定 id 的 item
+  function removeItemByIds(ids: string[]) {
+    // 递归删除匹配的元素
+    function removeMatched(
+      items: (FileItem | FolderItem)[]
+    ): (FileItem | FolderItem)[] {
+      return items.filter((item) => {
+        // 如果当前 item 的 id 在待删除列表中,则过滤掉
+        if (ids.includes(item.id)) {
+          return false;
+        }
+        // 如果是文件夹,递归处理其子项
+        if (item.type === 'folder' && item.children) {
+          item.children = removeMatched(item.children);
+        }
+        return true;
+      });
+    }
+
+    return removeMatched(items);
+  }
+
+  async function handleMoveItem(eventDetail: {
+    sourceId: string;
+    targetId: string;
+  }) {
     const { sourceId, targetId } = eventDetail;
     // 深度查找 item
     function findItem(
@@ -190,29 +215,16 @@
       return undefined;
     }
 
-    // 从树中删除指定 id 的 item
-    function removeItem(items: (FileItem | FolderItem)[], id: string): boolean {
-      const index = items.findIndex((item) => item.id === id);
-      if (index > -1) {
-        items.splice(index, 1);
-        return true;
-      }
-
-      for (const item of items) {
-        if (item.type === 'folder' && item.children) {
-          if (removeItem(item.children, id)) return true;
-        }
-      }
-      return false;
-    }
-
     const sourceItem = findItem(items, sourceId);
     const targetItem = findItem(items, targetId) as FolderItem;
 
     if (sourceItem && targetItem && targetItem.type === 'folder') {
+      await (sourceItem.type === 'file' ? file : dir)(sourceItem.id).moveTo(
+        dir(targetItem.id)
+      );
+      items = removeItemByIds([sourceId]);
       targetItem.children = [...(targetItem.children || []), sourceItem];
-      removeItem(items, sourceId);
-      items = [...items]; // 触发更新
+      items = [...items];
     }
   }
 
@@ -220,7 +232,40 @@
   function handleFolderExpand(path: string) {
     loadDirectory(path);
   }
+
+  // 删除选中的文件和文件夹
+  async function deleteSelectedItems() {
+    const allItems = getAllItems(items);
+    const itemsToDelete = allItems.filter((item) => selectedIds.has(item.id));
+
+    for (const item of itemsToDelete) {
+      try {
+        await (item.type === 'file' ? file : dir)(item.id).remove();
+      } catch (error) {
+        console.error('Failed to delete item:', item.id, error);
+      }
+    }
+
+    items = removeItemByIds(Array.from(selectedIds));
+
+    // 清空选中状态
+    selectedIds = new Set();
+    lastSelectedId = null;
+  }
+
+  // 添加键盘事件监听
+  function handleKeyDown(event: KeyboardEvent) {
+    // 检查是否按下 cmd/ctrl + Backspace
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Backspace') {
+      event.preventDefault();
+      if (selectedIds.size > 0) {
+        deleteSelectedItems();
+      }
+    }
+  }
 </script>
+
+<svelte:window on:keydown={handleKeyDown} />
 
 <main use:initDrag>
   <Layout
