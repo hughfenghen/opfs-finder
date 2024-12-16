@@ -306,7 +306,10 @@
   }
 
   // 处理文件项右键
-  function handleItemContextMenu(e: MouseEvent, item: FileItem | FolderItem) {
+  function handleItemContextMenu(
+    e: MouseEvent,
+    hitItem: FileItem | FolderItem
+  ) {
     e.preventDefault();
 
     // 根据选中项的数量和类型来动态生成菜单项
@@ -328,8 +331,7 @@
       },
     });
 
-    // 如果只选中了一个项目，且是文件类型，才显示"打开方式"菜单
-    if (items.length === 1 && items[0].type === 'file') {
+    if (hitItem.type === 'file') {
       menuItems.push({
         icon: '📂',
         name: '打开方式',

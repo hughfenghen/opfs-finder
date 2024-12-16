@@ -12,13 +12,14 @@
 
   // 当前展开的子菜单索引
   let activeSubmenuIndex = $state<number | null>(null);
-  let submenuTimer = $state<number | null>(null);
+  let submenuTimer = $state(0);
 
   // 处理鼠标进入菜单项
-  function handleMouseEnter(index: number) {
+  function handleMouseEnterItem(index: number) {
     if (submenuTimer) clearTimeout(submenuTimer);
 
     if (items[index].children) {
+      clearTimeout(submenuTimer);
       submenuTimer = setTimeout(() => {
         activeSubmenuIndex = index;
       }, 300);
@@ -26,11 +27,16 @@
   }
 
   // 处理鼠标离开菜单项
-  function handleMouseLeave() {
-    if (submenuTimer) {
-      clearTimeout(submenuTimer);
-      submenuTimer = null;
+  function handleMouseLeaveItem(index: number) {
+    if (activeSubmenuIndex === index) {
+      activeSubmenuIndex = null;
     }
+  }
+
+  // 处理鼠标离开菜单项
+  function handleMouseLeave() {
+    clearTimeout(submenuTimer);
+    submenuTimer = 0;
     activeSubmenuIndex = null;
   }
 
@@ -51,7 +57,8 @@
   {#each items as item, index}
     <div
       class="menu-item"
-      onmouseenter={() => handleMouseEnter(index)}
+      onmouseenter={() => handleMouseEnterItem(index)}
+      onmouseleave={() => handleMouseLeaveItem(index)}
       onclick={() => handleClick(item)}
       aria-hidden="true"
     >
