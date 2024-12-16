@@ -1,4 +1,6 @@
 <script lang="ts">
+  import ContextMenu from './ContextMenu.svelte';
+
   interface MenuItem {
     icon?: string;
     name: string;
@@ -43,13 +45,15 @@
 <div
   class="context-menu"
   style="left: {x}px; top: {y}px"
-  on:mouseleave={handleMouseLeave}
+  onmouseleave={handleMouseLeave}
+  aria-hidden="true"
 >
   {#each items as item, index}
     <div
       class="menu-item"
-      on:mouseenter={() => handleMouseEnter(index)}
-      on:click={() => handleClick(item)}
+      onmouseenter={() => handleMouseEnter(index)}
+      onclick={() => handleClick(item)}
+      aria-hidden="true"
     >
       {#if item.icon}
         <span class="icon">{item.icon}</span>
@@ -62,7 +66,7 @@
 
     {#if item.children && activeSubmenuIndex === index}
       <div class="submenu">
-        <svelte:self items={item.children} x={x + 200} {y} />
+        <ContextMenu items={item.children} x={x + 200} {y} />
       </div>
     {/if}
   {/each}
@@ -72,7 +76,7 @@
   .context-menu {
     position: fixed;
     min-width: 200px;
-    background: #fff;
+    background: rgba(224, 224, 222, 0.97);
     border: 0.5px solid #b5b5b5;
     border-radius: 6px;
     padding: 5px 0;
@@ -90,7 +94,7 @@
   }
 
   .menu-item:hover {
-    background-color: #0060f0;
+    background-color: #3188f6;
     color: white;
   }
 

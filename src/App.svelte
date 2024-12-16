@@ -349,24 +349,22 @@
       items: menuItems,
     };
   }
-
-  // 点击其他区域关闭菜单
-  function handleClick() {
-    contextMenu.show = false;
-  }
 </script>
 
-<svelte:window on:keydown={handleKeyDown} on:click={handleClick} />
+<svelte:window
+  on:keydown={handleKeyDown}
+  onmousedown={() => (contextMenu.show = false)}
+/>
 
 <main use:initDrag>
   <Layout
     onClickEmpty={(evt: MouseEvent) => {
       if (evt.button === 2) {
         handleContextMenu(evt);
-      } else {
-        lastSelectedId = null;
-        selectedIds = new Set();
+        return;
       }
+      lastSelectedId = null;
+      selectedIds = new Set();
     }}
   >
     <DirList
