@@ -16,6 +16,7 @@
     onMoveItem: (event: { sourceId: string; targetId: string }) => void;
     onFolderExpand: (path: string) => void;
     onContextMenu: (event: MouseEvent, item: FileItem | FolderItem) => void;
+    onRename: (event: { item: FileItem | FolderItem; newName: string }) => void;
   };
 
   let {
@@ -26,6 +27,7 @@
     onMoveItem,
     onFolderExpand,
     onContextMenu,
+    onRename,
   }: Props = $props();
 
   // 控制文件夹展开/折叠的状态
@@ -110,6 +112,21 @@
     // 调用父组件的 onContextMenu 处理函数
     onContextMenu(event, item);
   }
+
+  // 处理编辑完成
+  function handleEditComplete(item: FileItem | FolderItem, newName: string) {
+    if (newName.trim() && newName !== item.name) {
+      onRename({
+        item,
+        newName: newName.trim(),
+      });
+    }
+  }
+
+  // 添加 focus action
+  function focus(node: HTMLElement) {
+    node.focus();
+  }
 </script>
 
 <div class="dir-list">
@@ -151,7 +168,27 @@
         {:else}
           <span class="icon">📄</span>
         {/if}
-        <span class="item-name">{item.name}</span>
+
+        {#if item.isEditing}
+          <input
+            type="text"
+            class="edit-input"
+            value={item.name}
+            onkeydown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleEditComplete(item, (e.target as HTMLInputElement).value);
+              } else if (e.key === 'Escape') {
+                onRename({ item, newName: item.name });
+              }
+            }}
+            use:focus
+          />
+        {:else}
+          <span class="item-name">
+            {item.name}
+          </span>
+        {/if}
       </div>
       <div class="col size">
         {item.type === 'folder' ? '--' : formatFileSize(item.size)}
@@ -170,6 +207,7 @@
         {onFolderExpand}
         {onMoveItem}
         {onContextMenu}
+        {onRename}
       />
     {/if}
   {/each}
@@ -258,5 +296,22 @@
   .expand-btn {
     color: #999;
     transition: transform 0.15s ease;
+  }
+
+  .edit-input {
+    flex: 1;
+    min-width: 100px;
+    height: 20px;
+    border: 1px solid #007aff;
+    border-radius: 2px;
+    padding: 0 4px;
+    font-size: inherit;
+    outline: none;
+  }
+
+  .item-name {
+    flex: 1;
+    padding: 2px 4px;
+    border-radius: 2px;
   }
 </style>

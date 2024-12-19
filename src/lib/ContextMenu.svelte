@@ -1,12 +1,6 @@
 <script lang="ts">
   import ContextMenu from './ContextMenu.svelte';
-
-  interface MenuItem {
-    icon?: string;
-    name: string;
-    children?: MenuItem[];
-    onClick?: () => void;
-  }
+  import type { MenuItem } from './types';
 
   let { items, x, y }: { items: MenuItem[]; x: number; y: number } = $props();
 

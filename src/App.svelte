@@ -1,7 +1,7 @@
 <script lang="ts">
   import Layout from './lib/Layout.svelte';
   import DirList from './lib/DirList.svelte';
-  import type { FileItem, FolderItem } from './lib/types';
+  import type { FileItem, FolderItem, MenuItem } from './lib/types';
   import { dir, file } from 'opfs-tools';
   import ContextMenu from './lib/ContextMenu.svelte';
 
@@ -287,14 +287,12 @@
         y: e.clientY,
         items: [
           {
-            icon: '��',
             name: '新建文件夹',
             onClick: () => {
               /* 处理新建文件夹 */
             },
           },
           {
-            icon: '📄',
             name: '新建文本文件',
             onClick: () => {
               /* 处理新建文本文件 */
@@ -305,31 +303,34 @@
     }
   }
 
-  // 处理文件项右键
+  // 更新右键菜单处理
   function handleItemContextMenu(
     e: MouseEvent,
     hitItem: FileItem | FolderItem
   ) {
     e.preventDefault();
 
-    // 根据选中项的数量和类型来动态生成菜单项
-    const menuItems = [];
-
-    // 基础操作：删除
-    menuItems.push({
-      icon: '🗑️',
-      name: `删除${items.length > 1 ? `(${items.length}项)` : ''}`,
-      onClick: () => deleteSelectedItems(),
-    });
-
-    // 复制操作
-    menuItems.push({
-      icon: '📋',
-      name: `复制${items.length > 1 ? `(${items.length}项)` : ''}`,
-      onClick: () => {
-        /* 处理复制 */
+    const menuItems: MenuItem[] = [
+      {
+        icon: '🗑️',
+        name: `删除${items.length > 1 ? `(${items.length}项)` : ''}`,
+        onClick: () => deleteSelectedItems(),
       },
-    });
+      {
+        icon: '📋',
+        name: `复制${items.length > 1 ? `(${items.length}项)` : ''}`,
+        onClick: () => {
+          /* 处理复制 */
+        },
+      },
+      {
+        icon: '🔄',
+        name: '重命名',
+        onClick: () => {
+          hitItem.isEditing = true;
+        },
+      },
+    ];
 
     if (hitItem.type === 'file') {
       menuItems.push({
@@ -351,11 +352,32 @@
       items: menuItems,
     };
   }
+
+  // 处理重命名完成
+  async function handleRename(event: {
+    item: FileItem | FolderItem;
+    newName: string;
+  }) {
+    const { item, newName } = event;
+    item.isEditing = false;
+
+    if (item.type === 'file') {
+      const curFile = file(item.id);
+      const targetFile = file(curFile.parent!.path + '/' + newName);
+      await curFile.moveTo(targetFile);
+    } else {
+      const curDir = dir(item.id);
+      const targetDir = dir(curDir.parent!.path + '/' + newName);
+      await curDir.moveTo(targetDir);
+    }
+
+    item.name = newName;
+  }
 </script>
 
 <svelte:window
-  on:keydown={handleKeyDown}
-  onmousedown={() => (contextMenu.show = false)}
+  onkeydown={handleKeyDown}
+  onclick={() => (contextMenu.show = false)}
 />
 
 <main use:initDrag>
@@ -377,6 +399,7 @@
       onMoveItem={handleMoveItem}
       onFolderExpand={handleFolderExpand}
       onContextMenu={handleItemContextMenu}
+      onRename={handleRename}
     />
   </Layout>
 </main>

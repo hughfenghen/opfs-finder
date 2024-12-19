@@ -1,17 +1,24 @@
-export interface FileItem {
+export interface BaseItem {
   id: string;
   name: string;
-  type: 'file';
-  size: number;
   modifiedAt: number;
   createdAt: number;
+  isEditing?: boolean;
 }
 
-export interface FolderItem {
-  id: string;
-  name: string;
+export interface FileItem extends BaseItem {
+  type: 'file';
+  size: number;
+}
+
+export interface FolderItem extends BaseItem {
   type: 'folder';
-  modifiedAt: number;
-  createdAt: number;
   children?: (FileItem | FolderItem)[];
+}
+
+export interface MenuItem {
+  icon?: string;
+  name: string;
+  children?: MenuItem[];
+  onClick?: () => void;
 }
