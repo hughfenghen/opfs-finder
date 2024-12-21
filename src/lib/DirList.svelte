@@ -94,9 +94,6 @@
   }
 
   function handleClick(event: MouseEvent, item: FileItem | FolderItem) {
-    // 阻止事件冒泡，避免嵌套选择问题
-    event.stopPropagation();
-
     onSelect({
       id: item.id,
       isCtrlKey: event.metaKey || event.ctrlKey, // metaKey for Mac, ctrlKey for Windows
