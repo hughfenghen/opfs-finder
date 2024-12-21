@@ -197,28 +197,29 @@
     return removeMatched(items);
   }
 
+  // 深度查找 item
+  function findItemById(
+    items: (FileItem | FolderItem)[],
+    id: string
+  ): FileItem | FolderItem | undefined {
+    for (const item of items) {
+      if (item.id === id) return item;
+      if (item.type === 'folder' && item.children) {
+        const found = findItemById(item.children, id);
+        if (found) return found;
+      }
+    }
+    return undefined;
+  }
+
   async function handleMoveItem(eventDetail: {
     sourceId: string;
     targetId: string;
   }) {
     const { sourceId, targetId } = eventDetail;
-    // 深度查找 item
-    function findItem(
-      items: (FileItem | FolderItem)[],
-      id: string
-    ): FileItem | FolderItem | undefined {
-      for (const item of items) {
-        if (item.id === id) return item;
-        if (item.type === 'folder' && item.children) {
-          const found = findItem(item.children, id);
-          if (found) return found;
-        }
-      }
-      return undefined;
-    }
 
-    const sourceItem = findItem(items, sourceId);
-    const targetItem = findItem(items, targetId) as FolderItem;
+    const sourceItem = findItemById(items, sourceId);
+    const targetItem = findItemById(items, targetId) as FolderItem;
 
     if (sourceItem && targetItem && targetItem.type === 'folder') {
       await (sourceItem.type === 'file' ? file : dir)(sourceItem.id).moveTo(
@@ -289,26 +290,27 @@
             name: '新建文件夹',
             onClick: async () => {
               const newDirPath = joinPath(path, '未命名文件夹');
-              await dir(newDirPath).create();
+              const newDir = await dir(newDirPath).create();
               items.push({
-                id: newDirPath,
+                id: newDir.path,
                 type: 'folder',
-                name: '未命名文件夹',
+                name: newDir.name,
                 isEditing: true,
                 modifiedAt: Date.now(),
                 createdAt: Date.now(),
+                children: [],
               });
             },
           },
           {
             name: '新建文本文件',
             onClick: async () => {
-              const newFilePath = joinPath(path, '未命名文件.txt');
-              await write(newFilePath, '');
+              const newFile = file(joinPath(path, '未命名文件.txt'));
+              await write(newFile, '');
               items.push({
-                id: newFilePath,
+                id: newFile.path,
                 type: 'file',
-                name: '未命名文件.txt',
+                name: newFile.name,
                 size: 0,
                 isEditing: true,
                 modifiedAt: Date.now(),
@@ -339,9 +341,9 @@
         icon: '🗑️',
         name: `删除${descStr}`,
         onClick: () => {
+          // 删除命中选中元素，需清空选中状态
           if (selectedIds.has(hitItem.id)) {
             deleteItemByIds(Array.from(selectedIds));
-            // 清空选中状态
             selectedIds = new Set();
             lastSelectedId = null;
           } else {
@@ -352,8 +354,39 @@
       {
         icon: '📋',
         name: `复制${descStr}`,
-        onClick: () => {
-          /* 处理复制 */
+        onClick: async () => {
+          // 获取源文件/文件夹和目标路径
+          const source =
+            hitItem.type === 'file' ? file(hitItem.id) : dir(hitItem.id);
+          const target =
+            source.kind === 'file'
+              ? await source.copyTo(
+                  file(joinPath(source.parent!.path, hitItem.name + '1'))
+                )
+              : await source.copyTo(
+                  dir(joinPath(source.parent!.path, hitItem.name + '1'))
+                );
+
+          // 获取父文件夹并添加新项
+          const targetArray =
+            (findItemById(items, source.parent!.path) as FolderItem | undefined)
+              ?.children ?? items;
+
+          targetArray.push({
+            id: target.path,
+            type: hitItem.type,
+            name: target.name,
+            ...(target.kind === 'file'
+              ? {
+                  size: await target.getSize(),
+                }
+              : {
+                  children: [],
+                }),
+            isEditing: false,
+            modifiedAt: Date.now(),
+            createdAt: Date.now(),
+          } as FileItem | FolderItem);
         },
       },
       {
