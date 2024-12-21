@@ -176,7 +176,7 @@
   }
 
   // 从树中删除指定 id 的 item
-  function removeItemByIds(ids: string[]) {
+  function filterItemsByIds(ids: string[]) {
     // 递归删除匹配的元素
     function removeMatched(
       items: (FileItem | FolderItem)[]
@@ -224,7 +224,7 @@
       await (sourceItem.type === 'file' ? file : dir)(sourceItem.id).moveTo(
         dir(targetItem.id)
       );
-      items = removeItemByIds([sourceId]);
+      items = filterItemsByIds([sourceId]);
       targetItem.children = [...(targetItem.children || []), sourceItem];
       items = [...items];
     }
@@ -235,10 +235,9 @@
     loadDirectory(path);
   }
 
-  // 删除选中文件和文件夹
-  async function deleteSelectedItems() {
+  async function deleteItemByIds(delIds: string[]) {
     const allItems = getAllItems(items);
-    const itemsToDelete = allItems.filter((item) => selectedIds.has(item.id));
+    const itemsToDelete = allItems.filter((item) => delIds.includes(item.id));
 
     for (const item of itemsToDelete) {
       try {
@@ -248,11 +247,7 @@
       }
     }
 
-    items = removeItemByIds(Array.from(selectedIds));
-
-    // 清空选中状态
-    selectedIds = new Set();
-    lastSelectedId = null;
+    items = filterItemsByIds(delIds);
   }
 
   // 添加键盘事件监听
@@ -261,7 +256,10 @@
     if ((event.metaKey || event.ctrlKey) && event.key === 'Backspace') {
       event.preventDefault();
       if (selectedIds.size > 0) {
-        deleteSelectedItems();
+        deleteItemByIds(Array.from(selectedIds));
+        // 清空选中状态
+        selectedIds = new Set();
+        lastSelectedId = null;
       }
     }
   }
@@ -330,15 +328,30 @@
   ) {
     e.preventDefault();
 
+    const selectedCnt = selectedIds.size;
+    const descStr =
+      selectedIds.has(hitItem.id) && selectedCnt > 1
+        ? `(${selectedCnt}项)`
+        : '';
+
     const menuItems: MenuItem[] = [
       {
         icon: '🗑️',
-        name: `删除${items.length > 1 ? `(${items.length}项)` : ''}`,
-        onClick: () => deleteSelectedItems(),
+        name: `删除${descStr}`,
+        onClick: () => {
+          if (selectedIds.has(hitItem.id)) {
+            deleteItemByIds(Array.from(selectedIds));
+            // 清空选中状态
+            selectedIds = new Set();
+            lastSelectedId = null;
+          } else {
+            deleteItemByIds([hitItem.id]);
+          }
+        },
       },
       {
         icon: '📋',
-        name: `复制${items.length > 1 ? `(${items.length}项)` : ''}`,
+        name: `复制${descStr}`,
         onClick: () => {
           /* 处理复制 */
         },
@@ -355,7 +368,7 @@
     if (hitItem.type === 'file') {
       menuItems.push({
         icon: '📂',
-        name: '打开方式',
+        name: '打开方式(WIP)',
         children: [
           { name: '文本', onClick: () => {} },
           { name: '图片', onClick: () => {} },
