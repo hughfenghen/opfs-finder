@@ -122,6 +122,8 @@
         item,
         newName: newName.trim(),
       });
+    } else {
+      item.isEditing = false;
     }
   }
 

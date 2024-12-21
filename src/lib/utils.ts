@@ -20,3 +20,7 @@ export function formatDate(timestamp: number) {
 
   return `${year}-${month}-${day} ${hour}:${minute}`;
 }
+
+export function joinPath(p1: string, p2: string) {
+  return `${p1}/${p2}`.replace('//', '/');
+}
