@@ -15,9 +15,13 @@
   ];
 
   const tags = [
-    { icon: '🏷️', name: '重要', color: 'red' },
-    { icon: '🏷️', name: '工作', color: 'blue' },
-    { icon: '🏷️', name: '个人', color: 'green' },
+    { name: '红色', color: '#FF1D1C' },
+    { name: '橙色', color: '#F67500' },
+    { name: '黄色', color: '#EEB100' },
+    { name: '绿色', color: '#00B327' },
+    { name: '蓝色', color: '#0071F7' },
+    { name: '紫色', color: '#A840CC' },
+    { name: '灰色', color: '#6D6C71' },
   ];
 </script>
 
@@ -35,10 +39,10 @@
     </section>
 
     <section class="nav-group">
-      <h3>标签</h3>
+      <h3>标签(WIP)</h3>
       {#each tags as tag}
         <div class="nav-item">
-          <span class="icon" style="color: {tag.color}">{tag.icon}</span>
+          <span class="color-dot" style="background-color: {tag.color}"></span>
           <span>{tag.name}</span>
         </div>
       {/each}
@@ -111,7 +115,7 @@
     font-size: 12px;
     color: #666;
     margin-bottom: 8px;
-    padding-left: 10px;
+    padding-left: 6px;
     font-weight: normal;
   }
 
@@ -193,5 +197,12 @@
 
   button:hover {
     background-color: #e8e8e8;
+  }
+
+  .color-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
   }
 </style>
