@@ -2,7 +2,7 @@
   import Layout from './lib/Layout.svelte';
   import DirList from './lib/DirList.svelte';
   import type { FileItem, FolderItem, MenuItem } from './lib/types';
-  import { dir, file } from 'opfs-tools';
+  import { dir, file, write } from 'opfs-tools';
   import ContextMenu from './lib/ContextMenu.svelte';
 
   let { path }: { path: string } = $props();
@@ -288,14 +288,33 @@
         items: [
           {
             name: '新建文件夹',
-            onClick: () => {
-              /* 处理新建文件夹 */
+            onClick: async () => {
+              const newDirPath = path + '/未命名文件夹';
+              await dir(newDirPath).create();
+              items.push({
+                id: newDirPath,
+                type: 'folder',
+                name: '未命名文件夹',
+                isEditing: true,
+                modifiedAt: Date.now(),
+                createdAt: Date.now(),
+              });
             },
           },
           {
             name: '新建文本文件',
-            onClick: () => {
-              /* 处理新建文本文件 */
+            onClick: async () => {
+              const newFilePath = path + '/未命名文件.txt';
+              await write(newFilePath, '');
+              items.push({
+                id: newFilePath,
+                type: 'file',
+                name: '未命名文件.txt',
+                size: 0,
+                isEditing: true,
+                modifiedAt: Date.now(),
+                createdAt: Date.now(),
+              });
             },
           },
         ],
@@ -365,10 +384,12 @@
       const curFile = file(item.id);
       const targetFile = file(curFile.parent!.path + '/' + newName);
       await curFile.moveTo(targetFile);
+      item.id = targetFile.path;
     } else {
       const curDir = dir(item.id);
       const targetDir = dir(curDir.parent!.path + '/' + newName);
       await curDir.moveTo(targetDir);
+      item.id = targetDir.path;
     }
 
     item.name = newName;

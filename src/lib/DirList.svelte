@@ -114,7 +114,12 @@
   }
 
   // 处理编辑完成
+  let lastEditTime = 0;
   function handleEditComplete(item: FileItem | FolderItem, newName: string) {
+    const now = performance.now();
+    if (now - lastEditTime < 300) return;
+    lastEditTime = now;
+
     if (newName.trim() && newName !== item.name) {
       onRename({
         item,
@@ -181,6 +186,9 @@
               } else if (e.key === 'Escape') {
                 onRename({ item, newName: item.name });
               }
+            }}
+            onblur={(e) => {
+              handleEditComplete(item, (e.target as HTMLInputElement).value);
             }}
             use:focus
           />
