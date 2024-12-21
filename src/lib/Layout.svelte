@@ -60,11 +60,11 @@
       <div class="current-path">
         <h2>文稿</h2>
       </div>
-      <div class="tools">
+      <!-- <div class="tools">
         <button>⚙️</button>
         <button>👁️</button>
         <button>🔍</button>
-      </div>
+      </div> -->
     </header>
 
     <!-- 主内容区域 -->
