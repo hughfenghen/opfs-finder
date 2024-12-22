@@ -1,6 +1,6 @@
 <script lang="ts">
   import { SvelteSet } from 'svelte/reactivity';
-  import { formatFileSize, formatDate } from './utils';
+  import { formatFileSize, formatDate, joinPath } from './utils';
   import DirList from './DirList.svelte';
   import type { FileItem, FolderItem } from './types';
 
@@ -13,7 +13,11 @@
       isCtrlKey: boolean;
       isShiftKey: boolean;
     }) => void;
-    onMoveItem: (event: { sourceId: string; targetId: string }) => void;
+    onMoveItem: (event: {
+      sourceId: string;
+      targetId: string;
+      sysFileEntry: FileSystemEntry | null;
+    }) => void;
     onFolderExpand: (path: string) => void;
     onContextMenu: (event: MouseEvent, item: FileItem | FolderItem) => void;
     onRename: (event: { item: FileItem | FolderItem; newName: string }) => void;
@@ -71,12 +75,24 @@
     dragOverId = null;
   }
 
-  function handleDrop(event: DragEvent, targetFolder: FolderItem) {
+  async function handleDrop(event: DragEvent, targetFolder: FolderItem) {
     event.preventDefault();
     dragOverId = null;
     const element = event.currentTarget as HTMLElement;
     element.classList.remove('drag-over');
 
+    let sysFileEntry: FileSystemEntry | null = null;
+    // 处理从操作系统拖拽的文件
+    if (event.dataTransfer?.items) {
+      const items = Array.from(event.dataTransfer.items);
+      for (const item of items) {
+        if (item.kind === 'file') {
+          sysFileEntry = item.webkitGetAsEntry();
+        }
+      }
+    }
+
+    // 处理内部拖拽
     const draggedData = JSON.parse(
       event.dataTransfer?.getData('text/plain') || '{}'
     );
@@ -84,15 +100,9 @@
     const detail = {
       sourceId: draggedData.id,
       targetId: targetFolder.id,
+      sysFileEntry,
     };
     onMoveItem(detail);
-
-    const moveEvent = new CustomEvent('moveItem', {
-      detail,
-      bubbles: true,
-      composed: true,
-    });
-    element.dispatchEvent(moveEvent);
   }
 
   function handleClick(event: MouseEvent, item: FileItem | FolderItem) {

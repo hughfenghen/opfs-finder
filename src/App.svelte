@@ -212,11 +212,51 @@
     return undefined;
   }
 
+  // 处理文件系统条目
+  async function handleFileSystemEntry(
+    entry: FileSystemEntry,
+    targetPath: string
+  ) {
+    return new Promise<void>(async (resolve) => {
+      if (entry.isFile) {
+        const fileEntry = entry as FileSystemFileEntry;
+        fileEntry.file(async (f) => {
+          // 创建文件
+          const newPath = joinPath(targetPath, f.name);
+          await write(file(newPath), f.stream());
+          resolve();
+        });
+      } else if (entry.isDirectory) {
+        const dirEntry = entry as FileSystemDirectoryEntry;
+        const newPath = joinPath(targetPath, entry.name);
+
+        // 创建目录
+        await dir(newPath).create();
+
+        // 递归处理子目录
+        const reader = dirEntry.createReader();
+        reader.readEntries(async (entries) => {
+          for (const entry of entries) {
+            await handleFileSystemEntry(entry, newPath);
+          }
+        });
+        resolve();
+      }
+    });
+  }
+
   async function handleMoveItem(eventDetail: {
     sourceId: string;
     targetId: string;
+    sysFileEntry: FileSystemEntry | null;
   }) {
-    const { sourceId, targetId } = eventDetail;
+    const { sourceId, targetId, sysFileEntry } = eventDetail;
+
+    if (sysFileEntry) {
+      await handleFileSystemEntry(sysFileEntry, targetId);
+      loadDirectory(targetId);
+      return;
+    }
 
     const sourceItem = findItemById(items, sourceId);
     const targetItem = findItemById(items, targetId) as FolderItem;
