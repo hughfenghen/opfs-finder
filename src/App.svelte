@@ -24,7 +24,7 @@
 
     if (isShiftKey && lastSelectedId) {
       // Shift 多选：选中两个文件之间的所有文件
-      const allItems = getAllItems(items);
+      const allItems = getAllItems(items, true);
       const startIdx = allItems.findIndex((item) => item.id === lastSelectedId);
       const endIdx = allItems.findIndex((item) => item.id === id);
       const [start, end] =
@@ -54,13 +54,20 @@
 
   // 递归获取所有文件项
   function getAllItems(
-    items: (FileItem | FolderItem)[]
+    items: (FileItem | FolderItem)[],
+    ignoreCollapsedChildren: boolean = false
   ): (FileItem | FolderItem)[] {
     let result: (FileItem | FolderItem)[] = [];
     for (const item of items) {
       result.push(item);
-      if (item.type === 'folder' && item.children) {
-        result = result.concat(getAllItems(item.children));
+      if (
+        item.type === 'folder' &&
+        !ignoreCollapsedChildren &&
+        item.children.length > 0
+      ) {
+        result = result.concat(
+          getAllItems(item.children, ignoreCollapsedChildren)
+        );
       }
     }
     return result;
