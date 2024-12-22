@@ -11,6 +11,7 @@
     canGoBack,
     canGoForward,
     onHistoryNavigation,
+    onWindClose,
   }: {
     onFavPathChange: (path: string) => void;
     onClickEmpty: (evt: MouseEvent) => void;
@@ -19,6 +20,7 @@
     canGoBack: boolean;
     canGoForward: boolean;
     onHistoryNavigation: (direction: 'backward' | 'forward') => void;
+    onWindClose: () => void;
   } = $props();
 
   // 导航项数据
@@ -42,6 +44,18 @@
 <div class="finder">
   <!-- 左侧导航 -->
   <nav class="sidebar">
+    <!-- 添加窗口控制按钮 -->
+    <div class="window-controls">
+      <button
+        class="window-btn close"
+        title="关闭"
+        aria-label="关闭"
+        onclick={onWindClose}
+      ></button>
+      <!-- <button class="window-btn maximize" title="最大化" aria-label="最大化"
+      ></button> -->
+    </div>
+
     <section class="nav-group">
       <h3>个人收藏</h3>
       {#each favorites as item}
@@ -133,29 +147,29 @@
     flex: 0 0 180px;
     width: 200px;
     background-color: #f5f5f5;
-    padding: 20px 10px;
+    padding: 0px 16px 20px;
     border-right: 1px solid #e0e0e0;
     background: #e0e0de;
     border-right: 0.5px solid #b5b5b5;
     user-select: none;
-  }
-
-  .nav-group {
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
   }
 
   .nav-group h3 {
     font-size: 12px;
     color: #666;
     margin-bottom: 8px;
-    padding-left: 6px;
     font-weight: normal;
+  }
+  .nav-group:first-of-type h3 {
+    margin-top: 0;
   }
 
   .nav-item {
     display: flex;
     align-items: center;
-    padding: 4px 8px;
+    padding: 4px 2px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 13px;
@@ -220,7 +234,7 @@
     overflow: auto;
   }
 
-  button {
+  .tools button {
     padding: 5px 10px;
     border: none;
     background: none;
@@ -228,7 +242,7 @@
     border-radius: 5px;
   }
 
-  button:hover {
+  .tools button:hover {
     background-color: #e8e8e8;
   }
 
@@ -265,5 +279,54 @@
 
   .nav-btn:not(:disabled):hover {
     opacity: 1;
+  }
+
+  .window-controls {
+    height: 52px; /* 与 toolbar 高度一致 */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #e0e0de;
+  }
+
+  .window-btn {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    -webkit-app-region: no-drag; /* 按钮不参与拖拽 */
+    position: relative;
+  }
+
+  .window-btn:hover::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background-size: 8px;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.5;
+  }
+
+  .close {
+    background-color: #fe5f58;
+  }
+
+  .close:hover::after {
+    background-image: url('data:image/svg+xml;utf8,<svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L7 7M7 1L1 7" stroke="black" stroke-width="1.2"/></svg>');
+  }
+
+  .maximize {
+    background-color: #2bc840;
+  }
+
+  .maximize:hover::after {
+    background-image: url('data:image/svg+xml;utf8,<svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 3.5V1.5C1 1.22386 1.22386 1 1.5 1H6.5C6.77614 1 7 1.22386 7 1.5V6.5C7 6.77614 6.77614 7 6.5 7H1.5C1.22386 7 1 6.77614 1 6.5V4.5" stroke="black" stroke-width="1.2"/></svg>');
   }
 </style>

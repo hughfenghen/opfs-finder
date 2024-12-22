@@ -1,4 +1,4 @@
-import { mount } from 'svelte';
+import { mount, unmount } from 'svelte';
 import './app.css';
 import App from './App.svelte';
 import { dir } from 'opfs-tools';
@@ -33,12 +33,16 @@ function createWindow() {
 
   container.appendChild(wrapper);
 
-  return mount(App, {
+  const app = mount(App, {
     target: wrapper,
     props: {
       path: '/',
+      onWindClose: () => {
+        unmount(app);
+      },
     },
   });
+  return app;
 }
 
 // 创建初始窗口

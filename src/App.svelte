@@ -6,7 +6,8 @@
   import ContextMenu from './lib/ContextMenu.svelte';
   import { joinPath } from './lib/utils';
 
-  let { path }: { path: string } = $props();
+  let { path, onWindClose }: { path: string; onWindClose: () => void } =
+    $props();
   let items = $state<(FileItem | FolderItem)[]>([]);
 
   // 选中的文件ID集合
@@ -84,7 +85,10 @@
   // 初始化拖拽功能
   function initDrag(node: HTMLElement) {
     function handleMouseDown(e: MouseEvent) {
-      if ((e.target as HTMLElement).closest('.toolbar')) {
+      if (
+        (e.target as HTMLElement).closest('.toolbar') ||
+        (e.target as HTMLElement).closest('.window-controls')
+      ) {
         isDragging = true;
         // 获取当前实际位置
         const rect = node.getBoundingClientRect();
@@ -597,6 +601,7 @@
     onHistoryNavigation={handleHistoryNavigation}
     canGoBack={currentHistoryIndex > 0}
     canGoForward={currentHistoryIndex < pathHistory.length - 1}
+    {onWindClose}
     onClickEmpty={(evt: MouseEvent) => {
       if (evt.button === 2) {
         handleContextMenu(evt);
