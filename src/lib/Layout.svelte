@@ -137,6 +137,7 @@
     border-right: 1px solid #e0e0e0;
     background: #e0e0de;
     border-right: 0.5px solid #b5b5b5;
+    user-select: none;
   }
 
   .nav-group {
