@@ -2,16 +2,22 @@
   import type { Snippet } from 'svelte';
 
   const {
+    onFavPathChange,
     onClickEmpty,
     children,
-  }: { onClickEmpty: (evt: MouseEvent) => void; children: Snippet } = $props();
+    dirName,
+  }: {
+    onFavPathChange: (path: string) => void;
+    onClickEmpty: (evt: MouseEvent) => void;
+    children: Snippet;
+    dirName: string;
+  } = $props();
 
   // 导航项数据
   const favorites = [
-    { icon: '📁', name: '文稿' },
-    { icon: '⬇️', name: '下载' },
-    { icon: '🖥️', name: '桌面' },
-    { icon: '📸', name: '图片' },
+    { icon: '📁', name: '文稿', path: '/Documents' },
+    { icon: '⬇️', name: '下载', path: '/Downloads' },
+    { icon: '📸', name: '图片', path: '/Pictures' },
   ];
 
   const tags = [
@@ -31,7 +37,13 @@
     <section class="nav-group">
       <h3>个人收藏</h3>
       {#each favorites as item}
-        <div class="nav-item">
+        <div
+          class="nav-item"
+          onclick={() => {
+            onFavPathChange(item.path);
+          }}
+          aria-hidden="true"
+        >
           <span class="icon">{item.icon}</span>
           <span>{item.name}</span>
         </div>
@@ -58,7 +70,7 @@
         <button>→</button>
       </div>
       <div class="current-path">
-        <h2>文稿</h2>
+        <h2>{dirName}</h2>
       </div>
       <!-- <div class="tools">
         <button>⚙️</button>

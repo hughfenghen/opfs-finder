@@ -17,6 +17,7 @@
     onFolderExpand: (path: string) => void;
     onContextMenu: (event: MouseEvent, item: FileItem | FolderItem) => void;
     onRename: (event: { item: FileItem | FolderItem; newName: string }) => void;
+    onPathChange: (path: string) => void;
   };
 
   let {
@@ -28,6 +29,7 @@
     onFolderExpand,
     onContextMenu,
     onRename,
+    onPathChange,
   }: Props = $props();
 
   // 控制文件夹展开/折叠的状态
@@ -131,6 +133,13 @@
   function focus(node: HTMLElement) {
     node.focus();
   }
+
+  // 添加双击处理函数
+  function handleDoubleClick(item: FileItem | FolderItem) {
+    if (item.type === 'folder') {
+      onPathChange(item.id);
+    }
+  }
 </script>
 
 <div class="dir-list">
@@ -153,6 +162,7 @@
       draggable={true}
       class:drag-over={dragOverId === item.id}
       onclick={(e) => handleClick(e, item)}
+      ondblclick={() => handleDoubleClick(item)}
       oncontextmenu={(e) => handleContextMenu(e, item)}
       ondragstart={(e) => handleDragStart(e, item)}
       ondragover={(e) => handleDragOver(e, item)}
@@ -215,6 +225,7 @@
         {onMoveItem}
         {onContextMenu}
         {onRename}
+        {onPathChange}
       />
     {/if}
   {/each}

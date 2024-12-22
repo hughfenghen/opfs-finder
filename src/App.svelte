@@ -500,6 +500,13 @@
       createdAt: Date.now(),
     } as FileItem | FolderItem;
   }
+
+  function handlePathChange(newPath: string) {
+    path = newPath;
+    loadDirectory(newPath);
+    selectedIds = new Set();
+    lastSelectedId = null;
+  }
 </script>
 
 <svelte:window
@@ -509,6 +516,8 @@
 
 <main use:initDrag>
   <Layout
+    dirName={path.split('/').pop() || 'User'}
+    onFavPathChange={handlePathChange}
     onClickEmpty={(evt: MouseEvent) => {
       if (evt.button === 2) {
         handleContextMenu(evt);
@@ -527,6 +536,7 @@
       onFolderExpand={handleFolderExpand}
       onContextMenu={handleItemContextMenu}
       onRename={handleRename}
+      onPathChange={handlePathChange}
     />
   </Layout>
 </main>

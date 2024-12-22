@@ -1,7 +1,7 @@
 import { mount } from 'svelte';
 import './app.css';
 import App from './App.svelte';
-import { write } from 'opfs-tools';
+import { dir } from 'opfs-tools';
 
 // 创建一个容器用于放置所有窗口
 const container = document.createElement('div');
@@ -16,8 +16,10 @@ container.style.cssText = `
 document.body.appendChild(container);
 
 (async function initTestFiles() {
-  await write('/Documents/doc1.txt', 'test');
-  await write('/Downloads/doc2.txt', 'test');
+  const sysDirPaths = ['/Documents', '/Downloads', '/Pictures'];
+  for (const path of sysDirPaths) {
+    await dir(path).create();
+  }
 })();
 
 let zIndex = 1;
