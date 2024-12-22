@@ -343,7 +343,7 @@
         onClick: () => {
           // 删除命中选中元素，需清空选中状态
           if (selectedIds.has(hitItem.id)) {
-            deleteItemByIds(Array.from(selectedIds));
+            deleteItemByIds(getCommonNodes(Array.from(selectedIds)));
             selectedIds = new Set();
             lastSelectedId = null;
           } else {
@@ -355,38 +355,45 @@
         icon: '📋',
         name: `复制${descStr}`,
         onClick: async () => {
-          // 获取源文件/文件夹和目标路径
-          const source =
-            hitItem.type === 'file' ? file(hitItem.id) : dir(hitItem.id);
-          const target =
-            source.kind === 'file'
-              ? await source.copyTo(
-                  file(joinPath(source.parent!.path, hitItem.name + '1'))
-                )
-              : await source.copyTo(
-                  dir(joinPath(source.parent!.path, hitItem.name + '1'))
+          try {
+            if (selectedIds.has(hitItem.id)) {
+              // 复制所有选中的公共节点
+              const commonNodes = getCommonNodes(Array.from(selectedIds));
+              for (const nodeId of commonNodes) {
+                const source = findItemById(items, nodeId);
+                if (!source) continue;
+
+                const parentPath = source.id.substring(
+                  0,
+                  source.id.lastIndexOf('/')
                 );
+                const newItem = await copyNode(nodeId, parentPath);
 
-          // 获取父文件夹并添加新项
-          const targetArray =
-            (findItemById(items, source.parent!.path) as FolderItem | undefined)
-              ?.children ?? items;
+                // 添加到目标数组
+                const targetArray =
+                  (findItemById(items, parentPath) as FolderItem | undefined)
+                    ?.children ?? items;
+                targetArray.push(newItem);
+              }
+            } else {
+              // 只复制点击的节点
+              const parentPath = hitItem.id.substring(
+                0,
+                hitItem.id.lastIndexOf('/')
+              );
+              const newItem = await copyNode(hitItem.id, parentPath);
 
-          targetArray.push({
-            id: target.path,
-            type: hitItem.type,
-            name: target.name,
-            ...(target.kind === 'file'
-              ? {
-                  size: await target.getSize(),
-                }
-              : {
-                  children: [],
-                }),
-            isEditing: false,
-            modifiedAt: Date.now(),
-            createdAt: Date.now(),
-          } as FileItem | FolderItem);
+              const targetArray =
+                (findItemById(items, parentPath) as FolderItem | undefined)
+                  ?.children ?? items;
+              targetArray.push(newItem);
+            }
+
+            // 触发更新
+            items = [...items];
+          } catch (error) {
+            console.error('Failed to copy items:', error);
+          }
         },
       },
       {
@@ -440,6 +447,58 @@
     }
 
     item.name = newName;
+  }
+
+  // 获取公共节点（移除被包含的子节点）
+  function getCommonNodes(ids: string[]): string[] {
+    const result = new Set<string>();
+
+    for (const id of ids) {
+      let isSubNode = false;
+      // 检查当前节点是否是其他节点的子节点
+      for (const otherId of ids) {
+        if (id !== otherId && id.startsWith(otherId + '/')) {
+          isSubNode = true;
+          break;
+        }
+      }
+      if (!isSubNode) {
+        result.add(id);
+      }
+    }
+
+    return Array.from(result);
+  }
+
+  // 复制单个节点
+  async function copyNode(
+    sourceId: string,
+    parentPath: string
+  ): Promise<FileItem | FolderItem> {
+    const sourceItem = findItemById(items, sourceId);
+    if (!sourceItem) throw new Error('Source item not found');
+
+    const source = sourceItem.type === 'file' ? file(sourceId) : dir(sourceId);
+    const target =
+      source.kind === 'file'
+        ? await source.copyTo(file(joinPath(parentPath, sourceItem.name + '1')))
+        : await source.copyTo(dir(joinPath(parentPath, sourceItem.name + '1')));
+
+    return {
+      id: target.path,
+      type: sourceItem.type,
+      name: target.name,
+      ...(target.kind === 'file'
+        ? {
+            size: await target.getSize(),
+          }
+        : {
+            children: [],
+          }),
+      isEditing: false,
+      modifiedAt: Date.now(),
+      createdAt: Date.now(),
+    } as FileItem | FolderItem;
   }
 </script>
 
