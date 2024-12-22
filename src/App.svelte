@@ -14,6 +14,9 @@
   // 记录最后一个选中的文件ID
   let lastSelectedId = $state<string | null>(null);
 
+  let pathHistory = $state<string[]>([path]); // 路径历史记录
+  let currentHistoryIndex = $state<number>(0); // 当前历史记录索引
+
   // 处理选择事件
   function handleSelect(event: {
     id: string;
@@ -551,11 +554,34 @@
     } as FileItem | FolderItem;
   }
 
-  function handlePathChange(newPath: string) {
+  function handlePathChange(newPath: string, fromHistory = false) {
+    if (!fromHistory) {
+      // 如果不是从历史记录中改变的,则添加新记录
+      // 删除当前位置之后的所有记录
+      pathHistory = pathHistory.slice(0, currentHistoryIndex + 1);
+      // 添加新路径
+      pathHistory.push(newPath);
+      currentHistoryIndex = pathHistory.length - 1;
+    }
+
     path = newPath;
     loadDirectory(newPath);
     selectedIds = new Set();
     lastSelectedId = null;
+  }
+
+  // 添加前进后退处理函数
+  function handleHistoryNavigation(direction: 'forward' | 'backward') {
+    if (direction === 'backward' && currentHistoryIndex > 0) {
+      currentHistoryIndex--;
+      handlePathChange(pathHistory[currentHistoryIndex], true);
+    } else if (
+      direction === 'forward' &&
+      currentHistoryIndex < pathHistory.length - 1
+    ) {
+      currentHistoryIndex++;
+      handlePathChange(pathHistory[currentHistoryIndex], true);
+    }
   }
 </script>
 
@@ -568,6 +594,9 @@
   <Layout
     dirName={path.split('/').pop() || 'User'}
     onFavPathChange={handlePathChange}
+    onHistoryNavigation={handleHistoryNavigation}
+    canGoBack={currentHistoryIndex > 0}
+    canGoForward={currentHistoryIndex < pathHistory.length - 1}
     onClickEmpty={(evt: MouseEvent) => {
       if (evt.button === 2) {
         handleContextMenu(evt);

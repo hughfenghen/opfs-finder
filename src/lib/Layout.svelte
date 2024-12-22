@@ -1,16 +1,24 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
+  import backSvg from '../assets/back.svg?raw';
+  import forwardSvg from '../assets/forward.svg?raw';
 
   const {
     onFavPathChange,
     onClickEmpty,
     children,
     dirName,
+    canGoBack,
+    canGoForward,
+    onHistoryNavigation,
   }: {
     onFavPathChange: (path: string) => void;
     onClickEmpty: (evt: MouseEvent) => void;
     children: Snippet;
     dirName: string;
+    canGoBack: boolean;
+    canGoForward: boolean;
+    onHistoryNavigation: (direction: 'backward' | 'forward') => void;
   } = $props();
 
   // 导航项数据
@@ -66,8 +74,20 @@
     <!-- 工具栏 -->
     <header class="toolbar">
       <div class="navigation-buttons">
-        <button>←</button>
-        <button>→</button>
+        <button
+          class="nav-btn"
+          disabled={!canGoBack}
+          onclick={() => onHistoryNavigation('backward')}
+        >
+          {@html backSvg}
+        </button>
+        <button
+          class="nav-btn"
+          disabled={!canGoForward}
+          onclick={() => onHistoryNavigation('forward')}
+        >
+          {@html forwardSvg}
+        </button>
       </div>
       <div class="current-path">
         <h2>{dirName}</h2>
@@ -173,7 +193,7 @@
 
   .navigation-buttons button {
     font-size: 16px;
-    padding: 2px 8px;
+    padding: 6px 8px;
     color: #666;
     -webkit-app-region: no-drag; /* 按钮不参与拖拽 */
   }
@@ -216,5 +236,33 @@
     height: 12px;
     border-radius: 50%;
     margin-right: 8px;
+  }
+
+  .navigation-buttons {
+    margin-top: 2px;
+  }
+
+  .nav-btn {
+    padding: 4px 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0.6;
+  }
+
+  .nav-btn :global(svg) {
+    width: 16px;
+    height: 16px;
+    color: #676665;
+  }
+
+  .nav-btn:disabled {
+    opacity: 0.3;
+    color: #b3b2b1;
+    cursor: not-allowed;
+  }
+
+  .nav-btn:not(:disabled):hover {
+    opacity: 1;
   }
 </style>
