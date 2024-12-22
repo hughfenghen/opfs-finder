@@ -13,6 +13,7 @@ export interface FileItem extends BaseItem {
 
 export interface FolderItem extends BaseItem {
   type: 'folder';
+  isExpanded: boolean;
   children: (FileItem | FolderItem)[];
 }
 

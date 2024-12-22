@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { SvelteSet } from 'svelte/reactivity';
-  import { formatFileSize, formatDate, joinPath } from './utils';
+  import { formatFileSize, formatDate } from './utils';
   import DirList from './DirList.svelte';
   import type { FileItem, FolderItem } from './types';
 
@@ -18,7 +17,7 @@
       targetId: string;
       sysFileEntry: FileSystemEntry | null;
     }) => void;
-    onFolderExpand: (path: string) => void;
+    onToggleFolder: (folder: FolderItem) => void;
     onContextMenu: (event: MouseEvent, item: FileItem | FolderItem) => void;
     onRename: (event: { item: FileItem | FolderItem; newName: string }) => void;
     onPathChange: (path: string) => void;
@@ -30,28 +29,13 @@
     selectedIds,
     onSelect,
     onMoveItem,
-    onFolderExpand,
+    onToggleFolder,
     onContextMenu,
     onRename,
     onPathChange,
   }: Props = $props();
 
-  // 控制文件夹展开/折叠的状态
-  let expandedFolders = new SvelteSet<string>();
-
   let dragOverId = $state<string | null>(null);
-
-  // 切换文件夹展开状态
-  function toggleFolder(folder: FolderItem) {
-    if (!expandedFolders.has(folder.id)) {
-      onFolderExpand(folder.id); // folder.id 就是文件夹路径
-    }
-    if (expandedFolders.has(folder.id)) {
-      expandedFolders.delete(folder.id);
-    } else {
-      expandedFolders.add(folder.id);
-    }
-  }
 
   function handleDragStart(event: DragEvent, item: FileItem | FolderItem) {
     event.dataTransfer?.setData(
@@ -184,9 +168,9 @@
         {#if item.type === 'folder'}
           <button
             class="expand-btn"
-            onclick={() => toggleFolder(item as FolderItem)}
+            onclick={() => onToggleFolder(item as FolderItem)}
           >
-            {expandedFolders.has(item.id) ? '▼' : '▶'}
+            {item.isExpanded ? '▼' : '▶'}
           </button>
           <span class="icon">📁</span>
         {:else}
@@ -225,13 +209,13 @@
     </div>
 
     <!-- 递归显示子文件夹内容 -->
-    {#if item.type === 'folder' && expandedFolders.has(item.id) && item.children}
+    {#if item.type === 'folder' && item.isExpanded && item.children}
       <DirList
         items={item.children}
         level={level + 1}
         {selectedIds}
         {onSelect}
-        {onFolderExpand}
+        {onToggleFolder}
         {onMoveItem}
         {onContextMenu}
         {onRename}

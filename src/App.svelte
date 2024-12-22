@@ -132,6 +132,7 @@
             return {
               ...baseItem,
               type: 'folder',
+              isExpanded: false,
               children: [], // 初始为空，展开时加载
             };
           } else {
@@ -252,14 +253,14 @@
   }) {
     const { sourceId, targetId, sysFileEntry } = eventDetail;
 
-    if (sysFileEntry) {
-      await handleFileSystemEntry(sysFileEntry, targetId);
-      loadDirectory(targetId);
-      return;
-    }
-
     const sourceItem = findItemById(items, sourceId);
     const targetItem = findItemById(items, targetId) as FolderItem;
+
+    if (sysFileEntry) {
+      await handleFileSystemEntry(sysFileEntry, targetId);
+      if (targetItem.isExpanded) loadDirectory(targetId);
+      return;
+    }
 
     if (sourceItem && targetItem && targetItem.type === 'folder') {
       await (sourceItem.type === 'file' ? file : dir)(sourceItem.id).moveTo(
@@ -272,8 +273,9 @@
   }
 
   // 处理文件夹展开事件
-  function handleFolderExpand(path: string) {
-    loadDirectory(path);
+  function handleToggleFolder(folder: FolderItem) {
+    folder.isExpanded = !folder.isExpanded;
+    if (folder.isExpanded) loadDirectory(folder.id);
   }
 
   async function deleteItemByIds(delIds: string[]) {
@@ -339,6 +341,7 @@
                 modifiedAt: Date.now(),
                 createdAt: Date.now(),
                 children: [],
+                isExpanded: false,
               });
             },
           },
@@ -573,7 +576,7 @@
       {selectedIds}
       onSelect={handleSelect}
       onMoveItem={handleMoveItem}
-      onFolderExpand={handleFolderExpand}
+      onToggleFolder={handleToggleFolder}
       onContextMenu={handleItemContextMenu}
       onRename={handleRename}
       onPathChange={handlePathChange}
