@@ -5,6 +5,7 @@
   import { dir, file, write } from 'opfs-tools';
   import ContextMenu from './lib/ContextMenu.svelte';
   import { joinPath } from './lib/utils';
+  import { getDirMeta, updateDirMeta } from './lib/dir-meta-manager';
 
   let { path, onWindClose }: { path: string; onWindClose: () => void } =
     $props();
@@ -132,14 +133,23 @@
 
   async function loadDirectory(dirPath: string) {
     try {
-      const entries = await dir(dirPath).children();
+      const entries = (await dir(dirPath).children()).filter(
+        (e) => e.name !== '.opfs-finder-meta'
+      );
+      const { entries: metaEntries } = await getDirMeta(dirPath);
+      console.log(111111, metaEntries);
+
       const dirItems = entries.map(
         async (entry): Promise<FileItem | FolderItem> => {
           const baseItem = {
             id: entry.path,
             name: entry.name,
-            modifiedAt: Date.now(),
-            createdAt: Date.now(),
+            modifiedAt:
+              metaEntries.find((e) => e.name === entry.name)?.modifiedAt ??
+              Date.now(),
+            createdAt:
+              metaEntries.find((e) => e.name === entry.name)?.createdAt ??
+              Date.now(),
           };
 
           if (entry.kind === 'dir') {
@@ -357,6 +367,7 @@
                 children: [],
                 isExpanded: false,
               });
+              await updateDirMeta(newDir);
             },
           },
           {
@@ -373,6 +384,7 @@
                 modifiedAt: Date.now(),
                 createdAt: Date.now(),
               });
+              await updateDirMeta(newFile);
             },
           },
         ],

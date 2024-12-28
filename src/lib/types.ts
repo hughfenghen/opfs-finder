@@ -1,3 +1,5 @@
+import type { file, dir } from 'opfs-tools';
+
 export interface BaseItem {
   id: string;
   name: string;
@@ -23,3 +25,6 @@ export interface MenuItem {
   children?: MenuItem[];
   onClick?: () => void;
 }
+
+export type OTFile = ReturnType<typeof file>;
+export type OTDir = ReturnType<typeof dir>;
