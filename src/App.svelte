@@ -287,6 +287,8 @@
     }
 
     if (sourceItem && targetItem && targetItem.type === 'folder') {
+      if (sourceId === targetId) return;
+
       await (sourceItem.type === 'file' ? file : dir)(sourceItem.id).moveTo(
         dir(targetItem.id)
       );
