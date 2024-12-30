@@ -2,6 +2,7 @@
   import type { Snippet } from 'svelte';
   import backSvg from '../assets/back.svg?raw';
   import forwardSvg from '../assets/forward.svg?raw';
+  import { resize } from './resize-8-direction';
 
   const {
     onFavPathChange,
@@ -41,7 +42,7 @@
   ];
 </script>
 
-<div class="finder">
+<div class="finder" use:resize>
   <!-- 左侧导航 -->
   <nav class="sidebar">
     <!-- 添加窗口控制按钮 -->
@@ -73,7 +74,7 @@
     </section>
 
     <section class="nav-group">
-      <h3>标签(WIP)</h3>
+      <h3>标签 (WIP)</h3>
       {#each tags as tag}
         <div class="nav-item">
           <span class="color-dot" style="background-color: {tag.color}"></span>
@@ -141,6 +142,7 @@
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     overflow: hidden;
+    position: relative;
   }
 
   .sidebar {
@@ -328,5 +330,75 @@
 
   .maximize:hover::after {
     background-image: url('data:image/svg+xml;utf8,<svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 3.5V1.5C1 1.22386 1.22386 1 1.5 1H6.5C6.77614 1 7 1.22386 7 1.5V6.5C7 6.77614 6.77614 7 6.5 7H1.5C1.22386 7 1 6.77614 1 6.5V4.5" stroke="black" stroke-width="1.2"/></svg>');
+  }
+
+  /* 拖拽缩放 */
+  :global(.grabber) {
+    position: absolute;
+    box-sizing: border-box;
+  }
+
+  :global(.grabber.right) {
+    width: 10px;
+    height: 100%;
+    right: -5px;
+    cursor: col-resize;
+  }
+
+  :global(.grabber.left) {
+    width: 10px;
+    height: 100%;
+    left: -5px;
+    cursor: col-resize;
+  }
+
+  :global(.grabber.top) {
+    height: 10px;
+    width: 100%;
+    top: -5px;
+    cursor: row-resize;
+  }
+
+  :global(.grabber.bottom) {
+    height: 10px;
+    width: 100%;
+    bottom: -5px;
+    cursor: row-resize;
+  }
+
+  :global(.grabber.top-left) {
+    height: 20px;
+    width: 20px;
+    top: -10px;
+    left: -10px;
+    cursor: nw-resize;
+    border-radius: 100%;
+  }
+
+  :global(.grabber.top-right) {
+    height: 20px;
+    width: 20px;
+    top: -10px;
+    right: -10px;
+    cursor: ne-resize;
+    border-radius: 100%;
+  }
+
+  :global(.grabber.bottom-left) {
+    height: 20px;
+    width: 20px;
+    bottom: -10px;
+    left: -10px;
+    cursor: sw-resize;
+    border-radius: 100%;
+  }
+
+  :global(.grabber.bottom-right) {
+    height: 20px;
+    width: 20px;
+    bottom: -10px;
+    right: -10px;
+    cursor: se-resize;
+    border-radius: 100%;
   }
 </style>

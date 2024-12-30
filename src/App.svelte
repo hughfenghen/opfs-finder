@@ -137,7 +137,6 @@
         (e) => e.name !== '.opfs-finder-meta'
       );
       const { entries: metaEntries } = await getDirMeta(dirPath);
-      console.log(111111, metaEntries);
 
       const dirItems = entries.map(
         async (entry): Promise<FileItem | FolderItem> => {
@@ -479,7 +478,7 @@
     if (hitItem.type === 'file') {
       menuItems.push({
         icon: '📂',
-        name: '打开方式(WIP)',
+        name: '打开方式 (WIP)',
         children: [
           { name: '文本', onClick: () => {} },
           { name: '图片', onClick: () => {} },
@@ -646,13 +645,10 @@
 <style>
   main {
     position: absolute;
-    padding: 20px;
     width: 900px;
     height: 500px;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    resize: both;
-    overflow: hidden;
   }
 </style>
