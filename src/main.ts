@@ -31,6 +31,11 @@ function createWindow() {
       z-index: ${zIndex++};
   `;
 
+  // 添加点击事件监听器
+  wrapper.addEventListener('mousedown', () => {
+    wrapper.style.zIndex = String(zIndex++);
+  });
+
   container.appendChild(wrapper);
 
   const app = mount(App, {
@@ -39,6 +44,7 @@ function createWindow() {
       path: '/',
       onWindClose: () => {
         unmount(app);
+        wrapper.remove();
       },
     },
   });
