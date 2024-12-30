@@ -136,94 +136,99 @@
   }
 </script>
 
-<div class="dir-list">
-  {#if level === 0}
-    <!-- 表头 -->
-    <div class="list-header">
-      <div class="col name">名称</div>
-      <div class="col size">大小</div>
-      <div class="col date">修改日期</div>
-      <div class="col date">创建日期</div>
-    </div>
-  {/if}
-
-  <!-- 文件列表 -->
-  {#each items as item}
-    <div
-      class="list-item"
-      class:selected={selectedIds.has(item.id)}
-      style:padding-left="{level * 20}px"
-      draggable={true}
-      class:drag-over={dragOverId === item.id}
-      onclick={(e) => handleClick(e, item)}
-      ondblclick={() => handleDoubleClick(item)}
-      oncontextmenu={(e) => handleContextMenu(e, item)}
-      ondragstart={(e) => handleDragStart(e, item)}
-      ondragover={(e) => handleDragOver(e, item)}
-      ondragleave={handleDragLeave}
-      ondrop={(e) => handleDrop(e, item as FolderItem)}
-      aria-hidden="true"
-    >
-      <div class="col name">
-        {#if item.type === 'folder'}
-          <button
-            class="expand-btn"
-            onclick={() => onToggleFolder(item as FolderItem)}
-          >
-            {item.isExpanded ? '▼' : '▶'}
-          </button>
-          <span class="icon">📁</span>
-        {:else}
-          <span class="icon">📄</span>
-        {/if}
-
-        {#if item.isEditing}
-          <input
-            type="text"
-            class="edit-input"
-            value={item.name}
-            onkeydown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                handleEditComplete(item, (e.target as HTMLInputElement).value);
-              } else if (e.key === 'Escape') {
-                onRename({ item, newName: item.name });
-              }
-            }}
-            onblur={(e) => {
-              handleEditComplete(item, (e.target as HTMLInputElement).value);
-            }}
-            use:focus
-          />
-        {:else}
-          <span class="item-name">
-            {item.name}
-          </span>
-        {/if}
+{#if items.length > 0}
+  <div class="dir-list">
+    {#if level === 0}
+      <!-- 表头 -->
+      <div class="list-header">
+        <div class="col name">名称</div>
+        <div class="col size">大小</div>
+        <div class="col date">修改日期</div>
+        <div class="col date">创建日期</div>
       </div>
-      <div class="col size">
-        {item.type === 'folder' ? '--' : formatFileSize(item.size)}
-      </div>
-      <div class="col date">{formatDate(item.modifiedAt)}</div>
-      <div class="col date">{formatDate(item.createdAt)}</div>
-    </div>
-
-    <!-- 递归显示子文件夹内容 -->
-    {#if item.type === 'folder' && item.isExpanded && item.children}
-      <DirList
-        items={item.children}
-        level={level + 1}
-        {selectedIds}
-        {onSelect}
-        {onToggleFolder}
-        {onMoveItem}
-        {onContextMenu}
-        {onRename}
-        {onPathChange}
-      />
     {/if}
-  {/each}
-</div>
+
+    <!-- 文件列表 -->
+    {#each items as item}
+      <div
+        class="list-item"
+        class:selected={selectedIds.has(item.id)}
+        style:padding-left="{level * 20}px"
+        draggable={true}
+        class:drag-over={dragOverId === item.id}
+        onclick={(e) => handleClick(e, item)}
+        ondblclick={() => handleDoubleClick(item)}
+        oncontextmenu={(e) => handleContextMenu(e, item)}
+        ondragstart={(e) => handleDragStart(e, item)}
+        ondragover={(e) => handleDragOver(e, item)}
+        ondragleave={handleDragLeave}
+        ondrop={(e) => handleDrop(e, item as FolderItem)}
+        aria-hidden="true"
+      >
+        <div class="col name">
+          {#if item.type === 'folder'}
+            <button
+              class="expand-btn"
+              onclick={() => onToggleFolder(item as FolderItem)}
+            >
+              {item.isExpanded ? '▼' : '▶'}
+            </button>
+            <span class="icon">📁</span>
+          {:else}
+            <span class="icon">📄</span>
+          {/if}
+
+          {#if item.isEditing}
+            <input
+              type="text"
+              class="edit-input"
+              value={item.name}
+              onkeydown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleEditComplete(
+                    item,
+                    (e.target as HTMLInputElement).value
+                  );
+                } else if (e.key === 'Escape') {
+                  onRename({ item, newName: item.name });
+                }
+              }}
+              onblur={(e) => {
+                handleEditComplete(item, (e.target as HTMLInputElement).value);
+              }}
+              use:focus
+            />
+          {:else}
+            <span class="item-name">
+              {item.name}
+            </span>
+          {/if}
+        </div>
+        <div class="col size">
+          {item.type === 'folder' ? '--' : formatFileSize(item.size)}
+        </div>
+        <div class="col date">{formatDate(item.modifiedAt)}</div>
+        <div class="col date">{formatDate(item.createdAt)}</div>
+      </div>
+
+      <!-- 递归显示子文件夹内容 -->
+      {#if item.type === 'folder' && item.isExpanded && item.children}
+        <DirList
+          items={item.children}
+          level={level + 1}
+          {selectedIds}
+          {onSelect}
+          {onToggleFolder}
+          {onMoveItem}
+          {onContextMenu}
+          {onRename}
+          {onPathChange}
+        />
+      {/if}
+    {/each}
+  </div>
+{/if}
 
 <style>
   .dir-list {
@@ -247,12 +252,11 @@
   .list-item {
     display: flex;
     padding: 4px 0;
-    border-bottom: 1px solid #f0f0f0;
     cursor: default;
   }
 
-  .list-item:active {
-    background-color: #e8e8e8;
+  .list-item:nth-child(odd) {
+    background-color: #f4f5f5;
   }
 
   .col {
@@ -301,7 +305,7 @@
   /* 选中状态 */
   .list-item.selected {
     color: #fff;
-    background-color: #0364e1;
+    background-color: #0364e1 !important;
   }
 
   /* 文件夹展开/折叠图标 */
