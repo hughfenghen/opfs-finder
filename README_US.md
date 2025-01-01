@@ -4,6 +4,8 @@
 
 ![preview img](./preview.png)
 
+Try it now: <https://hughfenghen.github.io/opfs-finder>
+
 ## Author's Notes
 
 While developing [WebAV][1] (a project for processing audio and video in browsers), handling large audio/video file submissions required a file system. Unlike conventional Web Apps, we couldn't load all data into memory.  

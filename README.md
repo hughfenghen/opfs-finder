@@ -4,6 +4,8 @@
 
 ![preview img](./preview.png)
 
+立即体验 <https://hughfenghen.github.io/opfs-finder>
+
 ## 作者碎碎念
 
 我在开发 [WebAV][1] 项目（用于在浏览器中处理音视频）时，处理提交较大的音视频的文件必须依赖文件系统，不能像常规的 Web App 把数据全部加载到内存中；  
