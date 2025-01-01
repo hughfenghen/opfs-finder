@@ -16,11 +16,34 @@
       width: 100vw;
       height: 100vh;
     }
+
+    .tips {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      z-index: 1;
+      user-select: none;
+    }
+
+    .tips span:first-child {
+      color: #8e8e8e;
+    }
   </style>
 </head>
 
 <body>
   <div id="background"></div>
+  <div class="tips">
+    <span>Ctrl + N: </span>
+    <span>Create window</span>
+  </div>
   <script type="module" src="/src/main.ts"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanta/dist/vanta.fog.min.js"></script>

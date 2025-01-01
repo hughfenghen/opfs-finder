@@ -12,6 +12,7 @@ container.style.cssText = `
   width: 100vw;
   height: 100vh;
   display: flex;
+  z-index: 2;
 `;
 document.body.appendChild(container);
 
