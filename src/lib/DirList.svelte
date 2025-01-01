@@ -175,7 +175,7 @@
             </button>
             <span class="icon">📁</span>
           {:else}
-            <span class="icon">📄</span>
+            <span class="icon file-item">📄</span>
           {/if}
 
           {#if item.isEditing}
@@ -263,6 +263,9 @@
     padding: 0 8px;
     display: flex;
     align-items: center;
+  }
+  .file-item {
+    margin-left: 16px;
   }
 
   .name {

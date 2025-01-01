@@ -292,8 +292,8 @@
   }
 
   .window-btn {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     border: none;
     padding: 0;
