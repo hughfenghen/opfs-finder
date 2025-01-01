@@ -30,13 +30,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 18 # 或者您需要的 Node.js 版本
-
       - name: set pnpm
         uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
 
       - name: Install packages dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
