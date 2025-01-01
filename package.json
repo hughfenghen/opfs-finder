@@ -12,6 +12,7 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
     "@tsconfig/svelte": "^5.0.4",
+    "@types/wicg-file-system-access": "^2023.10.5",
     "svelte": "^5.2.7",
     "svelte-check": "^4.1.0",
     "tslib": "^2.8.1",
@@ -19,6 +20,6 @@
     "vite": "^6.0.1"
   },
   "dependencies": {
-    "opfs-tools": "^0.6.2"
+    "opfs-tools": "^0.7.0"
   }
 }

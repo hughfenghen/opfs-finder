@@ -473,6 +473,45 @@
           hitItem.isEditing = true;
         },
       },
+      {
+        icon: '📤',
+        name: `导出${descStr}`,
+        onClick: async () => {
+          try {
+            const handle = await window.showDirectoryPicker({
+              startIn: 'downloads',
+            });
+            if (selectedIds.has(hitItem.id)) {
+              // 导出所有选中的公共节点
+              const commonNodes = getCommonNodes(Array.from(selectedIds));
+              for (const nodeId of commonNodes) {
+                const source = findItemById(items, nodeId);
+                if (!source) continue;
+
+                await exportItem(source);
+              }
+            } else {
+              await exportItem(hitItem);
+            }
+
+            async function exportItem(item: FileItem | FolderItem) {
+              if (item.type === 'file') {
+                await file(item.id).copyTo(
+                  await handle.getFileHandle(item.name, {
+                    create: true,
+                  })
+                );
+              } else {
+                await dir(item.id).copyTo(
+                  await handle.getDirectoryHandle(item.name, { create: true })
+                );
+              }
+            }
+          } catch (error) {
+            console.error('Failed to export,', error);
+          }
+        },
+      },
     ];
 
     if (hitItem.type === 'file') {
@@ -551,8 +590,10 @@
     const source = sourceItem.type === 'file' ? file(sourceId) : dir(sourceId);
     const target =
       source.kind === 'file'
-        ? await source.copyTo(file(joinPath(parentPath, sourceItem.name + '1')))
-        : await source.copyTo(dir(joinPath(parentPath, sourceItem.name + '1')));
+        ? file(joinPath(parentPath, sourceItem.name + '1'))
+        : dir(joinPath(parentPath, sourceItem.name + '1'));
+    // @ts-ignore
+    await source.copyTo(target);
 
     return {
       id: target.path,

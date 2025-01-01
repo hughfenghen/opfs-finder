@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       opfs-tools:
-        specifier: ^0.6.2
-        version: 0.6.2
+        specifier: ^0.7.0
+        version: 0.7.0
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^5.0.0
@@ -18,6 +18,9 @@ importers:
       '@tsconfig/svelte':
         specifier: ^5.0.4
         version: 5.0.4
+      '@types/wicg-file-system-access':
+        specifier: ^2023.10.5
+        version: 2023.10.5
       svelte:
         specifier: ^5.2.7
         version: 5.8.1
@@ -328,6 +331,9 @@ packages:
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
+  '@types/wicg-file-system-access@2023.10.5':
+    resolution: {integrity: sha512-e9kZO9kCdLqT2h9Tw38oGv9UNzBBWaR1MzuAavxPcsV/7FJ3tWbU6RI3uB+yKIDPGLkGVbplS52ub0AcRLvrhA==}
+
   acorn-typescript@1.4.13:
     resolution: {integrity: sha512-xsc9Xv0xlVfwp2o7sQ+GCQ1PgbkdcpWdTzrwXxO3xDMTAywVS3oXVOcOHuRjAPkS4P9b+yc/qNF15460v+jp4Q==}
     peerDependencies:
@@ -412,8 +418,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  opfs-tools@0.6.2:
-    resolution: {integrity: sha512-C2+ElLE6WL9jBqhNPM5vN8QW88adNrFo13lMqyqelUQGSdH1R5MSNa8n6CnqmYWoOyGUqkmCZ5jxNl0n+/xHLg==}
+  opfs-tools@0.7.0:
+    resolution: {integrity: sha512-h2VN0j/eB2f+NITJf7xjRrvlgx2nkD3npP6+1CimWuQhOVTn5FeWEPwfiVLXMxtsK13+lsOhgk8neTUWrKsglw==}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -689,6 +695,8 @@ snapshots:
 
   '@types/estree@1.0.6': {}
 
+  '@types/wicg-file-system-access@2023.10.5': {}
+
   acorn-typescript@1.4.13(acorn@8.14.0):
     dependencies:
       acorn: 8.14.0
@@ -766,7 +774,7 @@ snapshots:
 
   nanoid@3.3.8: {}
 
-  opfs-tools@0.6.2: {}
+  opfs-tools@0.7.0: {}
 
   picocolors@1.1.1: {}
 
