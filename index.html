@@ -6,11 +6,37 @@
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vite + Svelte + TS</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #background {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
 </head>
 
 <body>
-  <div id="app"></div>
+  <div id="background"></div>
   <script type="module" src="/src/main.ts"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta/dist/vanta.fog.min.js"></script>
+  <script>
+    VANTA.FOG({
+      el: "#background",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      speed: 0.618
+    })
+
+  </script>
+
 </body>
 
 </html>
