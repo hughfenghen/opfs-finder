@@ -685,7 +685,7 @@
 
 <style>
   main {
-    position: absolute;
+    position: fixed;
     width: 900px;
     height: 500px;
     left: 50%;

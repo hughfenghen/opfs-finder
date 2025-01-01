@@ -6,12 +6,9 @@ import { dir } from 'opfs-tools';
 // 创建一个容器用于放置所有窗口
 const container = document.createElement('div');
 container.style.cssText = `
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
   z-index: 2;
 `;
 document.body.appendChild(container);
@@ -29,7 +26,8 @@ let zIndex = 1;
 function createWindow() {
   const wrapper = document.createElement('div');
   wrapper.style.cssText = `
-      z-index: ${zIndex++};
+    z-index: ${zIndex++};
+    position: absolute;
   `;
 
   // 添加点击事件监听器

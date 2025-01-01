@@ -3,9 +3,8 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vite + Svelte + TS</title>
+  <title>OPFS Finder</title>
   <style>
     body {
       margin: 0;
@@ -19,7 +18,7 @@
 
     .tips {
       position: fixed;
-      top: 20px;
+      bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
       background-color: rgba(0, 0, 0, 0.7);
@@ -40,6 +39,14 @@
 
 <body>
   <div id="background"></div>
+  <h1
+    style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); color: white; font-family: system-ui; margin: 0; z-index: 1;">
+    OPFS Finder
+    <a href="https://github.com/hughfenghen/opfs-finder" target="_blank"
+      style="display: block; font-size: 14px; color: #8e8e8e; text-decoration: none; text-align: center; margin-top: 5px;">
+      GitHub
+    </a>
+  </h1>
   <div class="tips">
     <span>Ctrl + N: </span>
     <span>Create window</span>
