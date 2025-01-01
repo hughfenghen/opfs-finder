@@ -43,18 +43,18 @@ For those interested in this project or AI-assisted programming, you can use the
 
 ### Styling
 
-[ ] Remove trailing zeros after decimal points in file sizes  
-[ ] Hide files starting with .  
-[ ] Set minimum window width to prevent file list line wrapping
+- [ ] Remove trailing zeros after decimal points in file sizes
+- [ ] Hide files starting with .
+- [ ] Set minimum window width to prevent file list line wrapping
 
 ### Features
 
-[ ] Add color labels for folders  
-[ ] Cross-window file dragging (moving)  
-[ ] Monitor folder changes, update list dynamically  
-[ ] Mount system file directories  
-[ ] Folder list sorting methods  
-[ ] Publish to NPM for third-party use
+- [ ] Add color labels for folders
+- [ ] Cross-window file dragging (moving)
+- [ ] Monitor folder changes, update list dynamically
+- [ ] Mount system file directories
+- [ ] Folder list sorting methods
+- [ ] Publish to NPM for third-party use
 
 ## Appendix
 
