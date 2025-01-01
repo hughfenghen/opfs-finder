@@ -17,8 +17,8 @@ I planned to create a "product" that demonstrates OPFS capabilities to accelerat
 I happened to think of imitating the Finder (MacOS file management) APP that I use every day, which could achieve good results even without a visual designer;
 As Web system Apps become increasingly complex and deeply dependent on the file system (OPFS), this project might even become a file manager for third-party applications.
 
-Initially, I was hesitant about starting this project since the main code implements "rather boring" page interaction logic.  
-Considering the growing popularity of AI-assisted programming, I wanted to test its capabilities, and the results were quite impressive. **95% of this project's code was implemented by AI**.  
+Initially, I was hesitant to start this project since it mainly involves implementing "mundane" page interaction logic;
+With the growing popularity of AI-assisted programming, I wanted to test its capabilities, and the results were quite impressive - **95% of this project's code was implemented by AI**;
 Therefore, I've included all important prompts from the project's startup phase in the [Prompts document](./prompts.md), which can serve as a reference for AI-assisted programming beginners.  
 For those interested in this project or AI-assisted programming, you can use the TODO List as practice exercises. We encourage using AI to implement features and submitting PRs after testing.
 
