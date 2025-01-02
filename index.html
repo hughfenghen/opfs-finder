@@ -16,18 +16,23 @@
       height: 100vh;
     }
 
-    .tips {
+    .tips-container {
       position: fixed;
       bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+      display: flex;
+      justify-content: center;
+      width: 100vw;
+      gap: 10px;
+      z-index: 1;
+    }
+
+    .tips {
       background-color: rgba(0, 0, 0, 0.7);
       color: white;
       padding: 8px 16px;
       border-radius: 6px;
       font-family: system-ui, -apple-system, sans-serif;
       font-size: 14px;
-      z-index: 1;
       user-select: none;
     }
 
@@ -47,9 +52,23 @@
       GitHub
     </a>
   </h1>
-  <div class="tips">
-    <span>Ctrl + N: </span>
-    <span>Create window</span>
+  <div class="tips-container">
+    <div class="tips">
+      <span>Ctrl + N: </span>
+      <span>Create window</span>
+    </div>
+    <div class="tips">
+      <span>Ctrl / Cmd + ←: </span>
+      <span>delete items</span>
+    </div>
+    <div class="tips">
+      <span>导入：</span>
+      <span>拖放系统文件到文件夹</span>
+    </div>
+    <div class="tips">
+      <span>更多：</span>
+      <span>鼠标右键</span>
+    </div>
   </div>
   <script type="module" src="/src/main.ts"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
