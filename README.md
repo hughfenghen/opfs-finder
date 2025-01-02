@@ -69,10 +69,10 @@
 
 ## 附录
 
-- [WebAV][1]
-- [opfs-tools][2]
+- [WebAV][1] 在浏览器中创建/编辑音视频文件
+- [opfs-tools][2] 便捷、高性能的 API 操作 OPFS 文件
 - [Web 文件系统（OPFS 及工具）介绍][3]
-- [OPFS(Origin private file system)][4]
+- [OPFS(Origin private file system)][4] MDN 文档
 
 [1]: https://github.com/bilibili/WebAV
 [2]: https://github.com/hughfenghen/opfs-tools

@@ -70,10 +70,10 @@ For those interested in this project or AI-assisted programming, you can use the
 
 ## Appendix
 
-- [WebAV][1]
-- [opfs-tools][2]
-- [Introduction to Web File System (OPFS and Tools)][3]
-- [OPFS(Origin private file system)][4]
+- [WebAV][1] Create/edit audio and video files in browser
+- [opfs-tools][2] Convenient and high-performance API for OPFS file operations
+- [Web File System (OPFS and Tools) Introduction][3]
+- [OPFS(Origin private file system)][4] MDN Documentation
 
 [1]: https://github.com/bilibili/WebAV
 [2]: https://github.com/hughfenghen/opfs-tools
