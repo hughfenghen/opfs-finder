@@ -17,7 +17,8 @@ Currently, it has good compatibility support across various browsers. For more d
 I'm very excited that the Web can provide file APIs that are very close to operating system capabilities. I predict that OPFS API will have great potential for applications in the future.  
 I planned to create a "product" that demonstrates OPFS capabilities to accelerate the adoption of this technology while improving the opfs-tools API.  
 I happened to think of imitating the Finder (MacOS file management) APP that I use every day, which could achieve good results even without a visual designer;
-As Web system Apps become increasingly complex and deeply dependent on the file system (OPFS), this project might even become a file manager for third-party applications.
+As Web applications become increasingly complex, they will rely more heavily on file systems (OPFS). This project might even become a file manager for third-party websites.
+What's it useful for right now? Who knows what kind of interesting things you might want to store in a webpage [doge]? (Files in this project are managed by the browser, cannot be found in the user's file system, and will not be uploaded)
 
 Initially, I was hesitant to start this project since it mainly involves implementing "mundane" page interaction logic;
 With the growing popularity of AI-assisted programming, I wanted to test its capabilities, and the results were quite impressive - **95% of this project's code was implemented by AI**;
