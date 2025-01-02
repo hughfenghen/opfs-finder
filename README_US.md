@@ -2,6 +2,8 @@
 
 [中文](./README.md) | English
 
+Using AI + OPFS to implement MacOS Finder in the browser, and maybe try to simulate an operating system in the browser in the future.
+
 ![preview img](./preview.png)
 
 Try it now: <https://hughfenghen.github.io/opfs-finder>
@@ -64,6 +66,7 @@ For those interested in this project or AI-assisted programming, you can use the
 - [ ] Mount system file directories
 - [ ] Folder list sorting methods
 - [ ] Publish to NPM for third-party use
+- [ ] Open text files, images, and audio/video files
 
 ## Appendix
 

@@ -2,6 +2,8 @@
 
 中文 | [English](./README_US.md)
 
+使用 AI + OPFS 在浏览器中实现 MacOS Finder，未来也许会尝试在浏览器中模拟操作系统。
+
 ![preview img](./preview.png)
 
 立即体验 <https://hughfenghen.github.io/opfs-finder>
@@ -63,7 +65,7 @@
 - [ ] 挂载系统文件目录
 - [ ] 文件夹列表排序方式
 - [ ] 发布到 NPM，方便第三方使用
-- [ ] 打开文本文件、音视频文件
+- [ ] 打开文本文件、图片、音视频文件
 
 ## 附录
 
