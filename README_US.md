@@ -14,11 +14,13 @@ To facilitate WebAV's audio/video processing, I developed and open-sourced [opfs
 [OPFS][4] is essentially a private storage space that browsers allocate to each website. Web developers can create, read, and write files in this private space using this API, requiring no user authorization and offering better performance.  
 Currently, it has good compatibility support across various browsers. For more details, you can read [Introduction to Web File System (OPFS and Tools)][3].
 
-I'm very excited that the Web can provide file APIs that are very close to operating system capabilities. I predict that OPFS API will have great potential for applications in the future.  
-I planned to create a "product" that demonstrates OPFS capabilities to accelerate the adoption of this technology while improving the opfs-tools API.  
-I happened to think of imitating the Finder (MacOS file management) APP that I use every day, which could achieve good results even without a visual designer;
-As Web applications become increasingly complex, they will rely more heavily on file systems (OPFS). This project might even become a file manager for third-party websites.
-What's it useful for right now? Who knows what kind of interesting things you might want to store in a webpage [doge]? (Files in this project are managed by the browser, cannot be found in the user's file system, and will not be uploaded)
+I am very excited that the Web has opened up file APIs that are very close to the operating system. I predict that the OPFS API will have great potential for applications in the future.  
+I plan to implement a "product" that can demonstrate OPFS capabilities to accelerate the adoption of this technology, while using this project to improve the opfs-tools API.
+
+I happened to think of mimicking the Finder (MacOS file management) APP that I use every day. Even without a visual designer, we can achieve good visual effects.  
+As Web system Apps become increasingly complex and deeply dependent on the file system (OPFS), this project might become a file manager for third-party websites.  
+Or implement features like opening/previewing text and audio/video files to simulate a real operating system in the browser.  
+As for what use it has now? Who knows what kind of strange things you might put in a webpage [doge]? (Files in this project are managed by the browser, cannot be found in the user's file system, and will not be uploaded)
 
 Initially, I was hesitant to start this project since it mainly involves implementing "mundane" page interaction logic;
 With the growing popularity of AI-assisted programming, I wanted to test its capabilities, and the results were quite impressive - **95% of this project's code was implemented by AI**;
@@ -35,6 +37,9 @@ For those interested in this project or AI-assisted programming, you can use the
   - To improve the opfs-tools API
   - To learn and apply AI technology in implementing common, mundane features, see [Prompts document](./prompts.md)
 - Encouraging interested developers to use AI to implement TODO List items and submit PRs
+- Project use cases
+  - Serve as a file manager for complex Web applications
+  - Simulate operating system in the browser
 
 ## Running the Project
 
