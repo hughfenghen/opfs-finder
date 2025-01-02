@@ -40,6 +40,7 @@ For those interested in this project or AI-assisted programming, you can use the
 - Project use cases
   - Serve as a file manager for complex Web applications
   - Simulate operating system in the browser
+  - Simulate operating system features in the browser (e.g., document editor, image viewer, pure web-based local video player)
 
 ## Running the Project
 
